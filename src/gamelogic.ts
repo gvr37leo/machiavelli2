@@ -52,38 +52,31 @@ class GameManager{
                 //transfer the money from the burgledrole player to the thiefrole player
             }
 
-            this.pickFlatOptions(1,1,['money','cards'],([money,cards]) => {
-                if(money){
+            this.pickOne(['money','cards'],'text',(pick) => {
+                if(pick == 'money'){
                     playerOfCurrentRole.money += 2
-                }else if(cards){
+                }else if(pick == 'cards'){
                     var mulligancards = this.game.deck.splice(0,2)
-                    this.pickCards(1,1,mulligancards,(chosenoptions) => {
-                        
+                    this.pickOne(mulligancards,'card',(cardid,unpicked) => {
+                        playerOfCurrentRole.hand.push(cardid)
+                        this.game.discardPile.push(...unpicked)
                     })
                 }
             })
-            
-
-            //earn money
-            //or
-            //pick 1 of 2 cards
-            //build 1 card
-
-            
 
             if(role.name == 'moordenaar'){
                 var possibleroles = []//roles after moordenaar
-                this.pickRole(possibleroles,(roleid) => {
+                this.pickOne(possibleroles,'role',(roleid) => {
                     this.game.murderedRole = roleid
                 })
                 
             }else if(role.name == 'dief'){
                 var possibleroles = []//roles after dief
-                this.pickRole(possibleroles,(roleid) => {
+                this.pickOne(possibleroles,'role',(roleid) => {
                     this.game.burgledRole = roleid
                 })
             }else if(role.name == 'magier'){
-                this.pickFlatOptions(1,1,['swapplayer','swapdeck'],([swapplayer,swapdeck]) => {
+                this.pickOne(['swapplayer','swapdeck'],'text',([swapplayer,swapdeck]) => {
                     if(swapplayer){
                         var possibleplayers = []
                         this.pickPlayer(possibleplayers,(playerid) => {
@@ -170,55 +163,43 @@ class GameManager{
         }
     }
 
-    pickCards(min,max,cardids:number[],cb:(data:boolean[]) => void){
-        var cards = cardids.map(cid => findbyid(this.game.cards,cid))
-        return this.pickLowLevel(min,max,[],cb)
-    }
+    
 
-    pickRole(roleids,cb:(roleid:number) => void){
-        this.pickLowLevelFromArray(1,1,roleids,(id) => null,(filoptions) => {
-            cb(filoptions[0])
+    pickOne(values:any[],type:string,cb:(pick:any,unpicked:any[],flags:boolean[]) => void){
+        this.pickMultiple(1,1,values,type,(chosen,unchosen,flags) => {
+            cb(chosen[0],unchosen,flags)
         })
     }
-    
-    pickRoles(min,max,roleids:number[],cb:(data:boolean[]) => void){
-        var role = roleids.map(rid => findbyid(this.game.roles,rid))
-        return this.pickLowLevel(min,max,[],cb)
-    }
 
-    pickPlayer(playerids,cb:(playerid:number) => void){
-        this.pickLowLevelFromArray(1,1,playerids,(id) => null,(filoptions) => {
-            cb(filoptions[0])
+    pickMultiple(min,max,values:any[],type:string,cb:(chosen:any[],unchosen:any[],flags:boolean[]) => void){
+        this.pickLowLevel(min,max,values.map((v,i) => {return {type:type,value:v}}),(flags) => {
+            var result = this.convert(values,flags)
+            cb(result.picked,result.unpicked,flags)
         })
     }
-    
-    pickPlayers(min,max,playerids:number[],cb:(data:boolean[]) => void){
-        var role = playerids.map(pid => findbyid(this.game.players,pid))
-        return this.pickLowLevel(min,max,[],cb)
-    }
-    
-    pickFlatOptions(min,max,options:string[],cb:(data:boolean[]) => void){
-    
-        return this.pickLowLevel(min,max,[],cb)
-    }
-
-    pickLowLevelFromArray(min,max,ids:number[],id2option:(id:number) => SelectOption,cb:(filtoptions:number[]) => void){
-        this.pickLowLevel(min,max,ids.map(id => id2option(id)),(chosenoptions) => {
-            var res = []
-            chosenoptions.forEach((v,i) => {
-                if(v == true){
-                    res.push(ids[i])
-                }
-            })
-            cb(res)
-        })
-    }
-    
     
     pickLowLevel(min,max,options:SelectOption[],cb:(data:boolean[]) => void){
-        var id = 10
-        this.listen2MulliganIdOnce(10,cb)
-        return 10
+        var id = Math.random()
+
+        this.listen2MulliganIdOnce(id,cb)
+        
+    }
+
+    convert<T>(values:T[],flags:boolean[]){
+        var picked:T[] = []
+        var unpicked:T[] = []
+        for(var i = 0; i < flags.length;i++){
+            if(flags[i]){
+                picked.push(values[i])
+            }else{
+                unpicked.push(values[i])
+            }
+        }
+
+        return {
+            picked,
+            unpicked,
+        }
     }
 
     listen2MulliganIdOnce(mulliganid,cb){
@@ -257,7 +238,8 @@ class SelectView{
 }
 
 class SelectOption{
-    html:HTMLElement
+    type:String
+    value:any
 }
 
 //phases
