@@ -7,21 +7,28 @@ class BoardView{
     showhand: HTMLElement;
     showboard: HTMLElement;
     passbutton: HTMLElement;
+    loadedPlayer:Player
 
     constructor(){
         this.root = string2html(`
         <div>
-            <div>
+            <div style="display:flex; justify-content:space-between;">
                 <div id="playerlist"></div>
                 <div id="rolelist"></div>
             </div>
         
-            <div id="dashboard">
-                <div id="money"></div>
-                <div id="playerrole"></div>
-                <div id="showhand"></div>
-                <div id="showboard"></div>
-                <div><button id="passbutton"></button></div>
+            <div id="dashboard" style="display:flex; justify-content:space-evenly;">
+                <div>
+                    money
+                    <div id="money"></div>
+                </div>
+                <div>
+                    role
+                    <div id="playerrole"></div>
+                </div>
+                <button id="showhand">showhand</button>
+                <button id="showboard">showboard</button>
+                <div><button id="passbutton">pass</button></div>
             </div>
         </div>
         `)
@@ -33,6 +40,14 @@ class BoardView{
         this.showhand = this.root.querySelector('#showhand')
         this.showboard = this.root.querySelector('#showboard')
         this.passbutton = this.root.querySelector('#passbutton')
+    }
+
+    loadDashboard(player:Player){
+        var role = roleStore.get(player.id)
+        this.money.innerText = player.money as any
+        this.playerrole.innerText = role.name
+        this.loadedPlayer = player
+
     }
 
 

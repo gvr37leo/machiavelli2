@@ -114,7 +114,9 @@ function createPlayer(name):Player{
 }
 
 function duplicate(object,amount){
-    return new Array(amount).map(() => copy(object))
+    var newarr = new Array(amount).fill(0)
+    var maps = newarr.map(() => copy(object))
+    return maps
 }
 
 function copy(object){

@@ -1,24 +1,43 @@
 class GameView{
     root: HTMLElement
-
+    board: BoardView
+    playerviews:PlayerView[] = []
+    roleviews:RoleView[] = []
+    carddisplay: CardDisplayView
+    modal: Modal
 
     constructor(game:Game){
+        this.modal = new Modal()
+        document.body.appendChild(this.modal.rootelement)
 
+        this.carddisplay = new CardDisplayView()
         
 
-        var board = new BoardView()
-        this.root = board.root
+        this.board = new BoardView()
+        this.root = this.board.root
+        this.board.showhand.addEventListener('click',() => {
+            this.carddisplay.displayCards(this.board.loadedPlayer.hand)
+            this.modal.setAndShow(this.carddisplay.root)
+        })
 
-        for(var player of playerStore.list()){
-            var playerview = new PlayerView()
+        this.board.showboard.addEventListener('click',() => {
+            this.carddisplay.displayCards(this.board.loadedPlayer.buildings)
+            this.modal.setAndShow(this.carddisplay.root)
+        })
+
+        for(let player of playerStore.list()){
+            let playerview = new PlayerView()
             playerview.set(player)
-            board.playerlist.appendChild(playerview.root)
+            this.board.playerlist.appendChild(playerview.root)
+            playerview.root.addEventListener('click',() => {
+                this.board.loadDashboard(player)
+            })
         }
 
-        for(var role of roleStore.list()){
-            var roleview = new RoleView()
+        for(let role of roleStore.list()){
+            let roleview = new RoleView()
             roleview.set(role)
-            board.rolelist.appendChild(roleview.root)
+            this.board.rolelist.appendChild(roleview.root)
         }
     }
 

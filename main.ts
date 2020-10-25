@@ -14,6 +14,8 @@
 /// <reference path="./views/roleview.ts" />
 /// <reference path="./views/gameview.ts" />
 /// <reference path="./views/playerview.ts" />
+/// <reference path="./views/carddisplayview.ts" />
+/// <reference path="./views/modal.ts" />
 
 
 
@@ -23,6 +25,8 @@ let {playerStore,roleStore,cardStore} = genDB()
 let manager = new GameManager()
 let mulliganview = new MulliganView()
 let gameview = new GameView(manager.game)
+gameview.board.loadDashboard(playerStore.list()[0])
+
 
 mulliganview.onMulliganConfirmed.listen(e => {
     manager.eventQueue.addAndTrigger('mulliganconfirmed',{
@@ -37,8 +41,8 @@ manager.outputEvents.listen((e) => {
     }
 })
 
-manager.setupListeners()
-manager.start()
+// manager.setupListeners()
+// manager.start()
 
 document.body.appendChild(gameview.root)
 
