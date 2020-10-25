@@ -1,7 +1,5 @@
 class Game{
-    players:Player[] = []
-    roles:Role[] = []
-    cards:Card[] = []
+    
 
     deck:number[] = []
     discardPile:number[] = []
@@ -13,31 +11,10 @@ class Game{
     kingshownRole:number = null
     playerturn
     roleturn
+    rolestopick:number[] = []
 
     constructor(){
-        this.players = [
-            new Player(),
-            new Player(),
-            new Player(),
-            new Player(),
-        ]
 
-        this.roles = [
-            new Role(),
-            new Role(),
-            new Role(),
-            new Role(),
-            new Role(),
-            new Role(),
-            new Role(),
-            new Role(),
-        ]
-
-        this.deck = [
-        ]
-        for(var i = 0; i < 65;i++){
-            this.cards.push(new Card())
-        }
     }
 
 }
@@ -56,6 +33,8 @@ class Player{
     hand:number[]
     buildings:number[]
     money:number
+    score:number
+    buildactions:number
 }
 
 class Card{
