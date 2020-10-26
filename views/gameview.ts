@@ -25,6 +25,14 @@ class GameView{
             this.modal.setAndShow(this.carddisplay.root)
         })
 
+        this.board.specialability.addEventListener('click',() => {
+            manager.eventQueue.addAndTrigger('specialability',{})
+        })
+
+        this.board.passbutton.addEventListener('click',() => {
+            manager.eventQueue.addAndTrigger('pass',{})
+        })
+
         for(let player of playerStore.list()){
             let playerview = new PlayerView()
             playerview.set(player)

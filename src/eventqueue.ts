@@ -48,15 +48,15 @@ class EventQueue{
         }
     }
     
-    add(eventtype:string,data:any){
+    add(type:string,data:any){
         this.events.push({
-            eventtype,
+            type: type,
             data,
         } as any)
     }
 
-    addAndTrigger(eventtype:string,data:any){
-        this.add(eventtype,data)
+    addAndTrigger(type:string,data:any){
+        this.add(type,data)
         this.process()
     }
 }

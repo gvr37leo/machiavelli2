@@ -8,6 +8,7 @@ class BoardView{
     showboard: HTMLElement;
     passbutton: HTMLElement;
     loadedPlayer:Player
+    specialability: HTMLElement;
 
     constructor(){
         this.root = string2html(`
@@ -28,6 +29,7 @@ class BoardView{
                 </div>
                 <button id="showhand">showhand</button>
                 <button id="showboard">showboard</button>
+                <button id="specialability">specialability</button>
                 <div><button id="passbutton">pass</button></div>
             </div>
         </div>
@@ -40,6 +42,9 @@ class BoardView{
         this.showhand = this.root.querySelector('#showhand')
         this.showboard = this.root.querySelector('#showboard')
         this.passbutton = this.root.querySelector('#passbutton')
+        this.specialability = this.root.querySelector('#specialability')
+
+        
     }
 
     loadDashboard(player:Player){

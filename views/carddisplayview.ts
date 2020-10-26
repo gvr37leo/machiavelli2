@@ -6,7 +6,7 @@ class CardDisplayView{
     constructor(){
 
         this.root = string2html(`
-            <div>
+            <div style="display:flex;">
 
             </div>
         `)

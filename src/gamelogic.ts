@@ -30,6 +30,14 @@ class GameManager{
     setupListeners(){
 
         this.eventQueue.listen('gamestart',(data) => {
+            this.game.deck = cardStore.list().map(c => c.id)
+            shuffle(this.game.deck)
+
+            for(var role of roleStore.list()){
+                role.player = null
+            }
+
+            
             for(let player of playerStore.list()){
                 player.money += 2
                 player.hand.push(...this.game.deck.splice(0,2))
@@ -50,7 +58,7 @@ class GameManager{
                 7:0,
             }
             var players = playerStore.list()
-            this.game.rolestopick = []
+            this.game.rolestopick = roleStore.list().map(r => r.id)
             shuffle(this.game.rolestopick)
             var ontable = this.game.rolestopick.splice(0,charttable[players.length])
             var down = this.game.rolestopick.splice(0,1)
@@ -67,13 +75,13 @@ class GameManager{
                 var role = roleStore.get(pickedroleid)
                 role.player = data.player
                 this.game.rolestopick = unpicked
+                var nextplayer = data.player + 1
 
-                if(data.player == 8){
+                if(nextplayer == 4){
                     this.setRoleTurn(0)
-                    
                 }else{
                     this.eventQueue.add('rolepick',{
-                        player:data.player + 1,
+                        player:nextplayer,
                     })
                 }
             })
@@ -81,31 +89,44 @@ class GameManager{
 
         this.eventQueue.listen('roleturn',(data) => {
             // data.roleid
-            let role = roleStore.get(data.roleid)
-            let playerOfCurrentRole = playerStore.get(role.player)
-            playerOfCurrentRole.buildactions = 1
-            if(this.game.burgledRole == data.roleid){
-                let thiefrole = roleStore.list().find(r => r.name == 'thief')
-                let burgledrole = roleStore.get(this.game.burgledRole)
-                let thiefplayer = playerStore.get(thiefrole.player)
-                let burgledplayer = playerStore.get(burgledrole.player)
-                thiefplayer.money += burgledplayer.money
-                burgledplayer.money = 0
-                //transfer the money from the burgledrole player to the thiefrole player
-            }
-
-            this.pickOne(['money','cards'],'text',(pick) => {
-                if(pick == 'money'){
-                    playerOfCurrentRole.money += 2
-                }else if(pick == 'cards'){
-                    let mulligancards = this.game.deck.splice(0,2)
-                    this.pickOne(mulligancards,'card',(cardid,unpicked) => {
-                        playerOfCurrentRole.hand.push(cardid)
-                        this.game.discardPile.push(...unpicked)
-                    })
+            let role = roleStore.get(data.role)
+            if(role.player == null){
+                this.incrementRoleTurn()
+            }else{
+                let playerOfCurrentRole = playerStore.get(role.player)
+                playerOfCurrentRole.buildactions = 1
+                if(this.game.burgledRole != null && this.game.burgledRole == data.role){
+                    let thiefrole = roleStore.list().find(r => r.name == 'thief')
+                    let burgledrole = roleStore.get(this.game.burgledRole)
+                    let thiefplayer = playerStore.get(thiefrole.player)
+                    let burgledplayer = playerStore.get(burgledrole.player)
+                    thiefplayer.money += burgledplayer.money
+                    burgledplayer.money = 0
+                    //transfer the money from the burgledrole player to the thiefrole player
                 }
-            })
+    
+                this.pickOne(['money','cards'],'text',(pick) => {
+                    if(pick == 'money'){
+                        playerOfCurrentRole.money += 2
+                        // roleturn is increased via pass button
+                    }else if(pick == 'cards'){
+                        let mulligancards = this.game.deck.splice(0,2)
+                        this.pickOne(mulligancards,'card',(cardid,unpicked) => {
+                            playerOfCurrentRole.hand.push(cardid)
+                            this.game.discardPile.push(...unpicked)
+                            // roleturn is increased via pass button
+                        })
+                    }
+                })
+            }
+        })
 
+        this.eventQueue.listen('specialability',(data) => {
+            var role = roleStore.get(this.game.roleturn)
+            var playerOfCurrentRole = playerStore.get(role.player)
+
+
+            //role specific stuff
             if(role.name == 'moordenaar'){
                 let possibleroles = roleStore.list().slice(1,8).map(r => r.id)//roles after moordenaar
                 this.pickOne(possibleroles,'role',(roleid) => {
@@ -165,7 +186,6 @@ class GameManager{
                     })
                 })
             }
-
         })
 
         this.eventQueue.listen('build',(data) => {
@@ -188,16 +208,16 @@ class GameManager{
                     this.eventQueue.add('roundstart',{})
                 }
             }else{
-                this.setRoleTurn(this.game.roleturn + 1)
+                this.incrementRoleTurn()
             }
         })
 
 
-        this.eventQueue.listen('mulliganConfirmed',(data) => {
-            data.mulliganid
-            // data.player
-            // data.chosenoptions
-        })
+        // this.eventQueue.listen('mulliganconfirmed',(data) => {
+        //     data.mulliganid
+        //     // data.player
+        //     // data.chosenoptions
+        // })
 
         
     }
@@ -264,6 +284,11 @@ class GameManager{
         this.eventQueue.add('roleturn',{role:roleid})
     }
 
+    incrementRoleTurn(){
+        this.game.roleturn++
+        this.eventQueue.add('roleturn',{role:this.game.roleturn})
+    }
+
     pickOne(values:any[],type:string,cb:(pick:any,unpicked:any[],flags:boolean[]) => void){
         this.pickMultiple(1,1,values,type,(chosen,unchosen,flags) => {
             cb(chosen[0],unchosen,flags)
@@ -280,6 +305,7 @@ class GameManager{
     mulliganidcounter = 0
     pickLowLevel(min,max,options:SelectOption[],cb:(data:boolean[]) => void){
         let id = this.mulliganidcounter++
+        this.listen2MulliganIdOnce(id,cb)
         this.outputEvents.trigger({type:'mulligan',data:{
             id,
             min,
@@ -288,7 +314,6 @@ class GameManager{
         }})
         //store muliggan event with the options attached to it
         // when someone confirms the mulligan event send this {id,[]chosenoptions}
-        this.listen2MulliganIdOnce(id,cb)
         
     }
 

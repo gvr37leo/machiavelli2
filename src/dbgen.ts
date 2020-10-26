@@ -27,6 +27,7 @@ function genDB(){
         bouwmeester,
         condotierre,
     ]
+    roleStore.set(roles)
 
     let players:Player[] = [
         createPlayer('paul'),
@@ -34,6 +35,7 @@ function genDB(){
         createPlayer('marijn'),
         createPlayer('geke'),
     ]
+    playerStore.set(players)
 
     let cards:Card[] = [
         ...duplicate(createCard(koning.id,3,'jachtslot',9),5),
@@ -64,12 +66,9 @@ function genDB(){
         ...duplicate(createCard(null,6,'drakenburcht',34),1),
         ...duplicate(createCard(null,6,'universiteit',35),1),
     ]
-
-    
-
     cardStore.set(cards)
-    roleStore.set(roles)
-    playerStore.set(players)
+    
+    
 
     return {
         cardStore,

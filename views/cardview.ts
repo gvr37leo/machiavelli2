@@ -9,7 +9,7 @@ class CardView{
 
     constructor(){
         this.root = string2html(`
-        <div>
+        <div style="border:3px solid black; margin:5px; padding:5px; border-radius:3px;">
             <img src="" alt="">
             <div id="cost">cost</div>
             <div id="name">name</div>
@@ -30,7 +30,7 @@ class CardView{
         this.cost.innerText = card.cost
         this.name.innerText = card.name
         var role = roleStore.get(card.role)
-        this.role.innerText = role.color
+        this.role.innerText = role?.color ?? ''
         this.image = card.image
     }
 

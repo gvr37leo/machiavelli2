@@ -30,8 +30,8 @@ gameview.board.loadDashboard(playerStore.list()[0])
 
 mulliganview.onMulliganConfirmed.listen(e => {
     manager.eventQueue.addAndTrigger('mulliganconfirmed',{
-        id:e.val.id,
-        chosen:e.val.chosen,
+        mulliganid:e.val.mulliganid,
+        chosenoptions:e.val.chosenoptions,
     })
 })
 
@@ -41,8 +41,12 @@ manager.outputEvents.listen((e) => {
     }
 })
 
-// manager.setupListeners()
-// manager.start()
+manager.setupListeners()
+manager.start()
+//2 gold
+//2 cards
+//crownwearer set
+//player 0 rolepick
 
 document.body.appendChild(gameview.root)
 
