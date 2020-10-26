@@ -7,14 +7,14 @@ function genDB(){
 
     
 
-    let moordenaar = createRole('moordenaar','white')
-    let dief = createRole('dief','white')
-    let magier = createRole('magier','white')
-    let koning = createRole('koning','yellow')
-    let prediker = createRole('prediker','blue')
-    let koopman = createRole('koopman','green')
-    let bouwmeester = createRole('bouwmeester','white')
-    let condotierre = createRole('condotierre','red')
+    let moordenaar = createRole('moordenaar','white','/res/moordenaar.png')
+    let dief = createRole('dief','white','/res/dief.png')
+    let magier = createRole('magier','white','/res/magier.png')
+    let koning = createRole('koning','yellow','/res/koning.png')
+    let prediker = createRole('prediker','blue','/res/prediker.png')
+    let koopman = createRole('koopman','green','/res/koopman.png')
+    let bouwmeester = createRole('bouwmeester','white','/res/bouwmeester.png')
+    let condotierre = createRole('condotierre','red','/res/condotierre.png')
 
 
     let roles:Role[] = [
@@ -77,12 +77,12 @@ function genDB(){
     }
 }
 
-function createRole(name,color):Role{
+function createRole(name,color,image):Role{
     return {
         id:null,
         name,
         color,
-        image:null,
+        image,
         player:null,
     }
 }
@@ -91,7 +91,7 @@ function createCard(role,cost,name,image:string):Card{
     return {
         id:null,
         cost,
-        image:null,
+        image,
         isAction:false,
         isAnyRole:false,
         name,

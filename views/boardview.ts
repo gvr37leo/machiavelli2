@@ -15,7 +15,7 @@ class BoardView{
         <div>
             <div style="display:flex; justify-content:space-between;">
                 <div id="playerlist"></div>
-                <div id="rolelist"></div>
+                <div style="display:flex;" id="rolelist"></div>
             </div>
         
             <div id="dashboard" style="display:flex; justify-content:space-evenly;">

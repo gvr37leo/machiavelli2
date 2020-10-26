@@ -6,7 +6,7 @@ class Modal{
 
     constructor(){
         this.rootelement = string2html(`<div style="
-            position:absolute; top:100px; right:100px; bottom:100px; left:100px; 
+            position:absolute; top:100px; right:150px; bottom:100px; left:150px; 
             border:1px solid black; 
             border-radius:3px;
             box-shadow: 2px 2px 7px 2px black;

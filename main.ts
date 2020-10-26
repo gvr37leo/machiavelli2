@@ -29,10 +29,12 @@ gameview.board.loadDashboard(playerStore.list()[0])
 
 
 mulliganview.onMulliganConfirmed.listen(e => {
-    manager.eventQueue.addAndTrigger('mulliganconfirmed',{
+    var mulligandata = {
         mulliganid:e.val.mulliganid,
         chosenoptions:e.val.chosenoptions,
-    })
+    }
+    console.log(mulligandata,JSON.stringify(mulligandata))
+    manager.eventQueue.addAndTrigger('mulliganconfirmed',mulligandata)
 })
 
 manager.outputEvents.listen((e) => {
@@ -43,6 +45,16 @@ manager.outputEvents.listen((e) => {
 
 manager.setupListeners()
 manager.start()
+manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:0,chosenoptions:[true,false,false,false,false]})
+manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:1,chosenoptions:[true,false,false,false]})
+manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:2,chosenoptions:[true,false,false]})
+manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:3,chosenoptions:[true,false]})
+manager.eventQueue.addAndTrigger('mulliganconfirmed',{"mulliganid":4,"chosenoptions":[false,true]})
+// manager.eventQueue.addAndTrigger('mulliganconfirmed',{"mulliganid":5,"chosenoptions":[true,false]})
+
+
+
+
 //2 gold
 //2 cards
 //crownwearer set

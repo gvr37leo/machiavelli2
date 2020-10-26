@@ -6,8 +6,8 @@ class RoleView{
 
     constructor(){
         this.root = string2html(`
-        <div>
-            <img src="" alt="">
+        <div style="margin:5px; padding:5px; border:1px solid black; border-radius:3px;">
+            <img width="100" src="" alt="">
             <div id="name" >name</div>
             <div id="color" >color</div>
         </div>
