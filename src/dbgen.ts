@@ -38,33 +38,33 @@ function genDB(){
     playerStore.set(players)
 
     let cards:Card[] = [
-        ...duplicate(createCard(koning.id,3,'jachtslot',9),5),
-        ...duplicate(createCard(koning.id,4,'slot',10),4),
-        ...duplicate(createCard(koning.id,5,'paleis',11),3),
-        ...duplicate(createCard(prediker.id,1,'tempel',12),3),
-        ...duplicate(createCard(prediker.id,2,'kerk',13),3),
-        ...duplicate(createCard(prediker.id,3,'abdij',14),3),
-        ...duplicate(createCard(prediker.id,4,'kathedraal',15),2),
-        ...duplicate(createCard(koopman.id,1,'taveerne',16),5),
-        ...duplicate(createCard(koopman.id,2,'gildehuis',17),3),
-        ...duplicate(createCard(koopman.id,2,'markt',18),4),
-        ...duplicate(createCard(koopman.id,3,'handelshuis',19),3),
-        ...duplicate(createCard(koopman.id,4,'haven',20),3),
-        ...duplicate(createCard(koopman.id,5,'raadhuis',21),2),
-        ...duplicate(createCard(condotierre.id,1,'wachttoren',22),3),
-        ...duplicate(createCard(condotierre.id,2,'kerker',23),3),
-        ...duplicate(createCard(condotierre.id,3,'toernooiveld',24),3),
-        ...duplicate(createCard(condotierre.id,5,'vesting',25),2),
-        ...duplicate(createCard(null,2,'hof der wonderen',26),1),
-        ...duplicate(createCard(null,3,'verdedigingstoren',27),2),
-        ...duplicate(createCard(null,5,'laboratorium',28),1),
-        ...duplicate(createCard(null,5,'smederij',29),1),
-        ...duplicate(createCard(null,5,'observatorium',30),1),
-        ...duplicate(createCard(null,5,'kerkhof',31),1),
-        ...duplicate(createCard(null,6,'bibliotheek',32),1),
-        ...duplicate(createCard(null,6,'school voor magiers',33),1),
-        ...duplicate(createCard(null,6,'drakenburcht',34),1),
-        ...duplicate(createCard(null,6,'universiteit',35),1),
+        ...duplicate(createCard(koning.id,3,'jachtslot','/res/jachtslot.png'),5),
+        ...duplicate(createCard(koning.id,4,'slot','/res/slot.png'),4),
+        ...duplicate(createCard(koning.id,5,'paleis','/res/paleis.png'),3),
+        ...duplicate(createCard(prediker.id,1,'tempel','/res/tempel.png'),3),
+        ...duplicate(createCard(prediker.id,2,'kerk','/res/kerk.png'),3),
+        ...duplicate(createCard(prediker.id,3,'abdij','/res/abdij.png'),3),
+        ...duplicate(createCard(prediker.id,4,'kathedraal','/res/kathedraal.png'),2),
+        ...duplicate(createCard(koopman.id,1,'taveerne','/res/taveerne.png'),5),
+        ...duplicate(createCard(koopman.id,2,'gildehuis','/res/gildehuis.png'),3),
+        ...duplicate(createCard(koopman.id,2,'markt','/res/markt.png'),4),
+        ...duplicate(createCard(koopman.id,3,'handelshuis','/res/handelshuis.png'),3),
+        ...duplicate(createCard(koopman.id,4,'haven','/res/haven.png'),3),
+        ...duplicate(createCard(koopman.id,5,'raadhuis','/res/raadhuis.png'),2),
+        ...duplicate(createCard(condotierre.id,1,'wachttoren','/res/wachttoren.png'),3),
+        ...duplicate(createCard(condotierre.id,2,'kerker','/res/kerker.png'),3),
+        ...duplicate(createCard(condotierre.id,3,'toernooiveld','/res/toernooiveld.png'),3),
+        ...duplicate(createCard(condotierre.id,5,'vesting','/res/vesting.png'),2),
+        ...duplicate(createCard(null,2,'hof der wonderen','/res/wonderen.png'),1),
+        ...duplicate(createCard(null,3,'verdedigingstoren','/res/verdedigingstoren.png'),2),
+        ...duplicate(createCard(null,5,'laboratorium','/res/laboratorium.png'),1),
+        ...duplicate(createCard(null,5,'smederij','/res/smederij.png'),1),
+        ...duplicate(createCard(null,5,'observatorium','/res/observatorium.png'),1),
+        ...duplicate(createCard(null,5,'kerkhof','/res/kerkhof.png'),1),
+        ...duplicate(createCard(null,6,'bibliotheek','/res/bibliotheek.png'),1),
+        ...duplicate(createCard(null,6,'school voor magiers','/res/schoolvoormagiers.png'),1),
+        ...duplicate(createCard(null,6,'drakenburcht','/res/drakenburcht.png'),1),
+        ...duplicate(createCard(null,6,'universiteit','/res/universiteit.png'),1),
     ]
     cardStore.set(cards)
     
@@ -87,7 +87,7 @@ function createRole(name,color):Role{
     }
 }
 
-function createCard(role,cost,name,image):Card{
+function createCard(role,cost,name,image:string):Card{
     return {
         id:null,
         cost,
