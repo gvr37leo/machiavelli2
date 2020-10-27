@@ -35,3 +35,7 @@ function count(arr,cb){
     }
     return count
 }
+
+function any(){
+    
+}

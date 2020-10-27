@@ -5,19 +5,21 @@ class BoardView{
     money: HTMLElement;
     playerrole: HTMLElement;
     showhand: HTMLElement;
-    showboard: HTMLElement;
     passbutton: HTMLElement;
     loadedPlayer:Player
     specialability: HTMLElement;
+    buildingcontainer: HTMLElement;
+    cdv: CardDisplayView;
 
     constructor(){
         this.root = string2html(`
-        <div>
+        <div style="margin:10px; padding:10px;">
             <div style="display:flex; justify-content:space-between;">
                 <div id="playerlist"></div>
                 <div style="display:flex;" id="rolelist"></div>
             </div>
-        
+            <div style="border:1px solid black; margin:10px;" id="buildingcontainer">
+            </div>
             <div id="dashboard" style="border:1px solid black; border-radius:3px; display:flex; justify-content:space-evenly;">
                 <div>
                     money
@@ -28,7 +30,6 @@ class BoardView{
                     <div id="playerrole"></div>
                 </div>
                 <button id="showhand">showhand</button>
-                <button id="showboard">showboard</button>
                 <button id="specialability">specialability</button>
                 <div><button id="passbutton">pass</button></div>
             </div>
@@ -40,11 +41,12 @@ class BoardView{
         this.money = this.root.querySelector('#money')
         this.playerrole = this.root.querySelector('#playerrole')
         this.showhand = this.root.querySelector('#showhand')
-        this.showboard = this.root.querySelector('#showboard')
         this.passbutton = this.root.querySelector('#passbutton')
         this.specialability = this.root.querySelector('#specialability')
+        this.buildingcontainer = this.root.querySelector('#buildingcontainer')
+        this.cdv = new CardDisplayView()
+        this.buildingcontainer.appendChild(this.cdv.root)
 
-        
     }
 
     loadDashboard(player:Player){
@@ -52,6 +54,8 @@ class BoardView{
         this.money.innerText = player.money as any
         this.playerrole.innerText = role.name
         this.loadedPlayer = player
+        this.cdv.loadCards(player.buildings)
+
 
     }
 

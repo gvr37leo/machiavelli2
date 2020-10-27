@@ -57,11 +57,11 @@ manager.outputEvents.listen((e) => {
 manager.setupListeners()
 manager.start()
 
-mulliganview.confirmchoice([true,false,false,false,false])
-mulliganview.confirmchoice([true,false,false,false])
-mulliganview.confirmchoice([true,false,false])
-mulliganview.confirmchoice([true,false])
-mulliganview.confirmchoice([true,false])
+// mulliganview.confirmchoice([true,false,false,false,false])
+// mulliganview.confirmchoice([true,false,false,false])
+// mulliganview.confirmchoice([true,false,false])
+// mulliganview.confirmchoice([true,false])
+// mulliganview.confirmchoice([true,false])
 
 
 

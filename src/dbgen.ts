@@ -55,7 +55,7 @@ function genDB(){
         ...duplicate(createCard(condotierre.id,2,'kerker','/res/kerker.png'),3),
         ...duplicate(createCard(condotierre.id,3,'toernooiveld','/res/toernooiveld.png'),3),
         ...duplicate(createCard(condotierre.id,5,'vesting','/res/vesting.png'),2),
-        ...duplicate(createCard(null,2,'hof der wonderen','/res/wonderen.png'),1),
+        ...duplicate(createCard(null,2,'hof der wonderen','/res/hofderwonderen.png'),1),
         ...duplicate(createCard(null,3,'verdedigingstoren','/res/verdedigingstoren.png'),2),
         ...duplicate(createCard(null,5,'laboratorium','/res/laboratorium.png'),1),
         ...duplicate(createCard(null,5,'smederij','/res/smederij.png'),1),

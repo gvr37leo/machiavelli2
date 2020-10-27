@@ -15,14 +15,18 @@ class GameView{
 
         this.board = new BoardView()
         this.root = this.board.root
+
+        this.carddisplay.onCardPlayed.listen((e) => {
+            manager.eventQueue.addAndTrigger('build',{
+                playerid:manager.getActivePlayer().id,
+                cardid:e.val,
+            })
+            this.modal.hide()
+        })
+
         this.board.showhand.addEventListener('click',() => {
             //make it so you can play the cards from this list
             this.carddisplay.loadCards(this.board.loadedPlayer.hand)
-            this.modal.setAndShow(this.carddisplay.root)
-        })
-
-        this.board.showboard.addEventListener('click',() => {
-            this.carddisplay.loadCards(this.board.loadedPlayer.buildings)
             this.modal.setAndShow(this.carddisplay.root)
         })
 

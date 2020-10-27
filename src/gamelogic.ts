@@ -63,8 +63,10 @@ class GameManager{
             var players = playerStore.list()
             this.game.rolestopick = roleStore.list().map(r => r.id)
             shuffle(this.game.rolestopick)
-            var ontable = this.game.rolestopick.splice(0,charttable[players.length])
-            var down = this.game.rolestopick.splice(0,1)
+            var openOnTable = this.game.rolestopick.splice(0,charttable[players.length])
+            
+            //if openontable contains king swap it with random card out of deck
+            var kingshown = this.game.rolestopick.splice(0,1)
 
             this.eventQueue.add('rolepick',{
                 player:0,
@@ -104,7 +106,7 @@ class GameManager{
                 let playerOfCurrentRole = playerStore.get(role.player)
                 playerOfCurrentRole.buildactions = 1
                 if(this.game.burgledRole != null && this.game.burgledRole == data.role){
-                    let thiefrole = roleStore.list().find(r => r.name == 'thief')
+                    let thiefrole = roleStore.list().find(r => r.name == 'dief')
                     let burgledrole = roleStore.get(this.game.burgledRole)
                     let thiefplayer = playerStore.get(thiefrole.player)
                     let burgledplayer = playerStore.get(burgledrole.player)
@@ -157,12 +159,14 @@ class GameManager{
                             let temp = player.hand
                             player.hand = playerOfCurrentRole.hand
                             playerOfCurrentRole.hand = temp
+                            this.updateClients()
                         })
                     }else if(swapdeck){
                         this.pickMultiple(0,10,playerOfCurrentRole.hand,'card',(chosen,unchosen) => {
                             playerOfCurrentRole.hand = unchosen
                             playerOfCurrentRole.hand.push(...this.game.deck.splice(0,chosen.length))
                             this.game.discardPile.push(...chosen)
+                            this.updateClients()
                         })
                     }
                     
@@ -170,14 +174,18 @@ class GameManager{
             }else if(role.name == 'koning'){
                 this.game.crownwearer = playerOfCurrentRole.id
                 this.processTaxes(role.id)
+                this.updateClients()
             }else if(role.name == 'prediker'){
                 this.processTaxes(role.id)
+                this.updateClients()
             }else if(role.name == 'koopman'){
                 playerOfCurrentRole.money++
                 this.processTaxes(role.id)
+                this.updateClients()
             }else if(role.name == 'bouwmeester'){
                 playerOfCurrentRole.hand.push(...this.game.deck.splice(0,2))
                 playerOfCurrentRole.buildactions = 3
+                this.updateClients()
             }else if(role.name == 'condotierre'){
                 this.processTaxes(role.id)
 
@@ -193,6 +201,7 @@ class GameManager{
                         let building = cardStore.get(buildingid)
                         playerOfCurrentRole.money -= building.cost - 1
                         targetedPlayer.buildings = unchosen
+                        this.updateClients()
                     })
                 })
             }
@@ -202,7 +211,7 @@ class GameManager{
             // data.playerid
             // data.cardid
             this.payForCard(data.playerid,data.cardid)
-            
+            this.updateClients()
             
         })
 

@@ -133,7 +133,7 @@ class MulliganItemWrapper{
         this.root = string2html(`
             <div>
                 <div id="itemcontainer" class="itemcontainer"></div>
-                <div>
+                <div style="display: flex; justify-content: center;">
                     <button id="selectbutton">select</button>
                 </div>
             </div>

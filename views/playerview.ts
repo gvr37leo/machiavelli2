@@ -7,9 +7,9 @@ class PlayerView{
     constructor(){
 
         this.root = string2html(`
-            <div class="player">
-                <div id="name"></div>
-                <div id="crown">crownwearer</div>
+            <div class="player" style="display:flex; align-items:center; padding:5px; margin-bottom:5px;">
+                <div style="margin-right:5px;" id="name"></div>
+                <img id="crown" width="40" src="/res/crown-solid.svg" />
             </div>
         `)
 
