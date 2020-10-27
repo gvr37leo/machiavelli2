@@ -62,9 +62,9 @@ class GameManager{
             }
             var players = playerStore.list()
             this.game.rolestopick = roleStore.list().map(r => r.id)
-            // shuffle(this.game.rolestopick)
-            // var ontable = this.game.rolestopick.splice(0,charttable[players.length])
-            // var down = this.game.rolestopick.splice(0,1)
+            shuffle(this.game.rolestopick)
+            var ontable = this.game.rolestopick.splice(0,charttable[players.length])
+            var down = this.game.rolestopick.splice(0,1)
 
             this.eventQueue.add('rolepick',{
                 player:0,

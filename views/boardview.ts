@@ -18,7 +18,7 @@ class BoardView{
                 <div style="display:flex;" id="rolelist"></div>
             </div>
         
-            <div id="dashboard" style="display:flex; justify-content:space-evenly;">
+            <div id="dashboard" style="border:1px solid black; border-radius:3px; display:flex; justify-content:space-evenly;">
                 <div>
                     money
                     <div id="money"></div>

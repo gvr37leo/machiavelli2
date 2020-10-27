@@ -16,6 +16,7 @@ class GameView{
         this.board = new BoardView()
         this.root = this.board.root
         this.board.showhand.addEventListener('click',() => {
+            //make it so you can play the cards from this list
             this.carddisplay.loadCards(this.board.loadedPlayer.hand)
             this.modal.setAndShow(this.carddisplay.root)
         })

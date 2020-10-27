@@ -3,6 +3,7 @@ class Modal{
     rootelement:HTMLElement
     containerelement:HTMLElement
     closebutton: HTMLElement
+    isHidden:boolean
 
     constructor(){
         this.rootelement = string2html(`<div style="
@@ -46,10 +47,12 @@ class Modal{
     }
 
     show(){
+        this.isHidden = false
         this.rootelement.style.display = ''
     }
 
     hide(){
+        this.isHidden = true
         this.rootelement.style.display = 'none'
     }
 }

@@ -27,6 +27,13 @@ class MulliganView{
         `)
         this.itemscontainer = this.root.querySelector('#items')
         this.confirmbutton = this.root.querySelector('#confirmbutton')
+
+        document.addEventListener('keydown', e => {
+            if(e.key == 'Enter' && this.modal.isHidden == false){
+                this.confirmbutton.click()
+            }
+        })
+
         this.confirmbutton.addEventListener('click',(e) => {
             this.modal.hide()
             var choicecount = count(this.choices,a => a)
