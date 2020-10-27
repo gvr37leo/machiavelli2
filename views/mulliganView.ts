@@ -35,14 +35,7 @@ class MulliganView{
         })
 
         this.confirmbutton.addEventListener('click',(e) => {
-            this.modal.hide()
-            var choicecount = count(this.choices,a => a)
-            if(inRange(this.mulligandata.min,this.mulligandata.max,choicecount)){
-                this.onMulliganConfirmed.trigger({
-                    mulliganid:this.mulligandata.id,
-                    chosenoptions:this.choices,
-                })
-            }
+            this.confirmchoice(this.choices)
 
         })
 
@@ -69,6 +62,17 @@ class MulliganView{
             let element = string2html(`<div>${text}</div>`)
             return element
         })
+    }
+
+    confirmchoice(choice:boolean[]){
+        this.modal.hide()
+        var choicecount = count(choice,a => a)
+        if(inRange(this.mulligandata.min,this.mulligandata.max,choicecount)){
+            this.onMulliganConfirmed.trigger({
+                mulliganid:this.mulligandata.id,
+                chosenoptions:choice,
+            })
+        }
     }
 
     display(data:MulliganData){

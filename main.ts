@@ -56,12 +56,13 @@ manager.outputEvents.listen((e) => {
 
 manager.setupListeners()
 manager.start()
-// manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:0,chosenoptions:[true,false,false,false,false]})
-// manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:1,chosenoptions:[true,false,false,false]})
-// manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:2,chosenoptions:[true,false,false]})
-// manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:3,chosenoptions:[true,false]})
-// manager.eventQueue.addAndTrigger('mulliganconfirmed',{"mulliganid":4,"chosenoptions":[false,true]})
-// manager.eventQueue.addAndTrigger('mulliganconfirmed',{"mulliganid":5,"chosenoptions":[true,false]})
+
+mulliganview.confirmchoice([true,false,false,false,false])
+mulliganview.confirmchoice([true,false,false,false])
+mulliganview.confirmchoice([true,false,false])
+mulliganview.confirmchoice([true,false])
+mulliganview.confirmchoice([true,false])
+
 
 
 
