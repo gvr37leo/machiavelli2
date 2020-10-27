@@ -4,13 +4,13 @@ class Game{
     deck:number[] = []
     discardPile:number[] = []
     crownwearer = 0
-    murderedRole
-    burgledRole
+    murderedRole = 0
+    burgledRole = 0
     firstFinishedPlayer
     discardedRoles:number[] = []
     kingshownRole:number = null
-    playerturn
-    roleturn
+    // playerturn:number
+    roleturn:number = 0
     rolestopick:number[] = []
 
     constructor(){

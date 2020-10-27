@@ -4,6 +4,7 @@ class EventQueue{
     idcounter = 0
     listeners:{id:number, type: string; cb: (data: any) => void; }[]
     events:{type:string,data:any}[]
+    onProcessFinished = new EventSystem<any>()
 
     constructor(){
         this.listeners = []
@@ -44,8 +45,8 @@ class EventQueue{
             } catch (error) {
                 console.log(error)
             }
-            
         }
+        this.onProcessFinished.trigger(0)
     }
     
     add(type:string,data:any){

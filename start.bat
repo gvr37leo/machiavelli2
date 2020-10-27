@@ -1,2 +1,3 @@
 start tsc
-start index.html
+start node ./server.js
+start http://localhost:8000

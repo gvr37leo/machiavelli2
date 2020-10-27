@@ -3,10 +3,11 @@ class RoleView{
     image: HTMLImageElement;
     color: HTMLElement;
     name: HTMLElement;
+    role: Role;
 
     constructor(){
         this.root = string2html(`
-        <div style="margin:5px; padding:5px; border:1px solid black; border-radius:3px;">
+        <div class="role" style="margin:5px; padding:5px; border-radius:3px;">
             <img width="100" src="" alt="">
             <div id="name" >name</div>
             <div id="color" >color</div>
@@ -19,10 +20,18 @@ class RoleView{
     }
 
     set(role:Role){
+        this.role = role
         this.name.innerText = role.name
         this.color.innerText = role.color
         this.image.src = role.image
     }
 
+    setHighlight(on:boolean){
+        if(on){
+            this.root.classList.add('highlighted')
+        }else{
+            this.root.classList.remove('highlighted')
+        }
+    }
 
 }

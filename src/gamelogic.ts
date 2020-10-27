@@ -29,6 +29,7 @@ class GameManager{
 
     setupListeners(){
 
+
         this.eventQueue.listen('gamestart',(data) => {
             this.game.deck = cardStore.list().map(c => c.id)
             shuffle(this.game.deck)
@@ -43,6 +44,8 @@ class GameManager{
                 player.hand.push(...this.game.deck.splice(0,2))
             }
             this.game.crownwearer = 0
+            this.game.burgledRole = null
+            this.game.murderedRole = null
             this.eventQueue.add('roundstart',{})
             //4 gebouwkaarten
             //2 goud
@@ -59,9 +62,9 @@ class GameManager{
             }
             var players = playerStore.list()
             this.game.rolestopick = roleStore.list().map(r => r.id)
-            shuffle(this.game.rolestopick)
-            var ontable = this.game.rolestopick.splice(0,charttable[players.length])
-            var down = this.game.rolestopick.splice(0,1)
+            // shuffle(this.game.rolestopick)
+            // var ontable = this.game.rolestopick.splice(0,charttable[players.length])
+            // var down = this.game.rolestopick.splice(0,1)
 
             this.eventQueue.add('rolepick',{
                 player:0,
@@ -69,7 +72,7 @@ class GameManager{
         })
 
         this.eventQueue.listen('rolepick',(data) => {
-            data.player
+            // data.player
 
             this.pickOne(this.game.rolestopick,'role',(pickedroleid,unpicked) => {
                 var role = roleStore.get(pickedroleid)
@@ -77,7 +80,7 @@ class GameManager{
                 this.game.rolestopick = unpicked
                 var nextplayer = data.player + 1
 
-                if(nextplayer == 4){
+                if(nextplayer == playerStore.list().length){//todo dit moet niet hardcoded
                     this.setRoleTurn(0)
                 }else{
                     this.eventQueue.add('rolepick',{
@@ -89,10 +92,15 @@ class GameManager{
 
         this.eventQueue.listen('roleturn',(data) => {
             // data.roleid
+
+            
+
             let role = roleStore.get(data.role)
-            if(role.player == null){
+            if(role.player == null || this.game.murderedRole == data.role){
                 this.incrementRoleTurn()
             }else{
+                
+
                 let playerOfCurrentRole = playerStore.get(role.player)
                 playerOfCurrentRole.buildactions = 1
                 if(this.game.burgledRole != null && this.game.burgledRole == data.role){
@@ -105,16 +113,18 @@ class GameManager{
                     //transfer the money from the burgledrole player to the thiefrole player
                 }
     
+                this.updateClients()
                 this.pickOne(['money','cards'],'text',(pick) => {
                     if(pick == 'money'){
                         playerOfCurrentRole.money += 2
                         // roleturn is increased via pass button
+                        this.updateClients()
                     }else if(pick == 'cards'){
                         let mulligancards = this.game.deck.splice(0,2)
                         this.pickOne(mulligancards,'card',(cardid,unpicked) => {
                             playerOfCurrentRole.hand.push(cardid)
                             this.game.discardPile.push(...unpicked)
-                            // roleturn is increased via pass button
+                            this.updateClients()
                         })
                     }
                 })
@@ -197,19 +207,8 @@ class GameManager{
         })
 
         this.eventQueue.listen('pass',(data) => {
-            if(this.game.roleturn >= 8){
-                if(this.isGameOver()){
-                    this.calculatePlayerScores()
-                    
-                    var sortedplayers = playerStore.list().sort((a,b) => a.score - b.score)
-                    var winner = last(sortedplayers)
-                    console.log(winner);
-                }else{
-                    this.eventQueue.add('roundstart',{})
-                }
-            }else{
-                this.incrementRoleTurn()
-            }
+            this.incrementRoleTurn()
+            
         })
 
 
@@ -222,6 +221,18 @@ class GameManager{
         
     }
 
+    updateClients(){
+        this.outputEvents.trigger({
+            type:'dataupdate',
+            data:{},
+        })
+    }
+
+    getActivePlayer(){
+        var role = roleStore.get(this.game.roleturn)
+        var player = playerStore.get(role.player)
+        return player
+    }
 
     calculatePlayerScores(){
         for(var player of playerStore.list()){
@@ -285,8 +296,21 @@ class GameManager{
     }
 
     incrementRoleTurn(){
+
         this.game.roleturn++
-        this.eventQueue.add('roleturn',{role:this.game.roleturn})
+        if(this.game.roleturn >= roleStore.list().length){
+            if(this.isGameOver()){
+                this.calculatePlayerScores()
+                
+                var sortedplayers = playerStore.list().sort((a,b) => a.score - b.score)
+                var winner = last(sortedplayers)
+                console.log(winner);
+            }else{
+                this.eventQueue.add('roundstart',{})
+            }
+        }else{
+            this.eventQueue.add('roleturn',{role:this.game.roleturn})
+        }
     }
 
     pickOne(values:any[],type:string,cb:(pick:any,unpicked:any[],flags:boolean[]) => void){

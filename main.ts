@@ -27,29 +27,40 @@ let mulliganview = new MulliganView()
 let gameview = new GameView(manager.game)
 gameview.board.loadDashboard(playerStore.list()[0])
 
+var mulliganevents = []
 
 mulliganview.onMulliganConfirmed.listen(e => {
     var mulligandata = {
         mulliganid:e.val.mulliganid,
         chosenoptions:e.val.chosenoptions,
     }
-    console.log(mulligandata,JSON.stringify(mulligandata))
+    mulliganevents.push(mulligandata)
     manager.eventQueue.addAndTrigger('mulliganconfirmed',mulligandata)
 })
+
+function logMulliganData(){
+    console.log(JSON.stringify(mulliganevents));
+}
 
 manager.outputEvents.listen((e) => {
     if(e.val.type == 'mulligan'){
         mulliganview.display(e.val.data)
     }
+
+    if(e.val.type == 'dataupdate'){
+        gameview.updateView()
+    }
 })
+
+
 
 manager.setupListeners()
 manager.start()
-manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:0,chosenoptions:[true,false,false,false,false]})
-manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:1,chosenoptions:[true,false,false,false]})
-manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:2,chosenoptions:[true,false,false]})
-manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:3,chosenoptions:[true,false]})
-manager.eventQueue.addAndTrigger('mulliganconfirmed',{"mulliganid":4,"chosenoptions":[false,true]})
+// manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:0,chosenoptions:[true,false,false,false,false]})
+// manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:1,chosenoptions:[true,false,false,false]})
+// manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:2,chosenoptions:[true,false,false]})
+// manager.eventQueue.addAndTrigger('mulliganconfirmed',{mulliganid:3,chosenoptions:[true,false]})
+// manager.eventQueue.addAndTrigger('mulliganconfirmed',{"mulliganid":4,"chosenoptions":[false,true]})
 // manager.eventQueue.addAndTrigger('mulliganconfirmed',{"mulliganid":5,"chosenoptions":[true,false]})
 
 

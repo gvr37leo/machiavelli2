@@ -16,12 +16,12 @@ class GameView{
         this.board = new BoardView()
         this.root = this.board.root
         this.board.showhand.addEventListener('click',() => {
-            this.carddisplay.displayCards(this.board.loadedPlayer.hand)
+            this.carddisplay.loadCards(this.board.loadedPlayer.hand)
             this.modal.setAndShow(this.carddisplay.root)
         })
 
         this.board.showboard.addEventListener('click',() => {
-            this.carddisplay.displayCards(this.board.loadedPlayer.buildings)
+            this.carddisplay.loadCards(this.board.loadedPlayer.buildings)
             this.modal.setAndShow(this.carddisplay.root)
         })
 
@@ -35,6 +35,7 @@ class GameView{
 
         for(let player of playerStore.list()){
             let playerview = new PlayerView()
+            this.playerviews.push(playerview)
             playerview.set(player)
             this.board.playerlist.appendChild(playerview.root)
             playerview.root.addEventListener('click',() => {
@@ -44,9 +45,22 @@ class GameView{
 
         for(let role of roleStore.list()){
             let roleview = new RoleView()
+            this.roleviews.push(roleview)
             roleview.set(role)
             this.board.rolelist.appendChild(roleview.root)
         }
     }
 
+    updateView(){
+        this.board.loadDashboard(manager.getActivePlayer())
+
+        for(var player of this.playerviews){
+            player.setCrownWearer(player.player.id == manager.game.crownwearer)
+            player.setHighlight(player.player.id == manager.getActivePlayer().id)
+        }
+
+        for(var role of this.roleviews){
+            role.setHighlight(role.role.id == manager.game.roleturn)
+        }
+    }
 }

@@ -8,6 +8,7 @@ class MulliganView{
     choices:boolean[] = []
     mulligandata: MulliganData
     modal: Modal
+    wrappers: MulliganItemWrapper[]
 
     constructor(){
         this.modal = new Modal()
@@ -65,23 +66,41 @@ class MulliganView{
 
     display(data:MulliganData){
         this.mulligandata = data
-        
+        this.wrappers = []
         this.choices = new Array(data.options.length).fill(false)
         this.itemscontainer.innerHTML = ''
         for (let i = 0; i < data.options.length; i++) {
             const option = data.options[i];
             let html = this.rendermap.get(option.type)(option.value)
             let wrapper = new MulliganItemWrapper()
+            this.wrappers.push(wrapper)
             wrapper.setItem(html)
 
             html.addEventListener('click',(e) => {
-                wrapper.toggle()    
-                this.choices[i] = !this.choices[i]
+                if(this.mulligandata.min == 1 && this.mulligandata.max == 1){
+                    
+                    this.choices.forEach((v,j) => {
+                        this.setChoice(j,false)    
+                    })
+                    this.setChoice(i,true)
+                }else{
+                    this.setChoice(i,!this.choices[i])
+                }
             })
 
             this.itemscontainer.appendChild(wrapper.root)
         }
         this.modal.setAndShow(this.root)
+    }
+
+    setChoice(index,val){
+        this.choices[index] = val
+        if(val){
+            this.wrappers[index].select()
+        }else{
+            this.wrappers[index].deselect()
+        }
+        
     }
 }
 
@@ -125,6 +144,16 @@ class MulliganItemWrapper{
         }else{
             this.itemcontainer.classList.remove('selected')
         }
+    }
+
+    deselect(){
+        this.selected = false
+        this.itemcontainer.classList.remove('selected')
+    }
+
+    select(){
+        this.selected = true
+        this.itemcontainer.classList.add('selected')
     }
 
 }

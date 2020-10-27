@@ -13,7 +13,7 @@ class CardDisplayView{
     }
 
 
-    displayCards(cardids:number[]){
+    loadCards(cardids:number[]){
         this.root.innerHTML = ''
         
         for(var id of cardids){
