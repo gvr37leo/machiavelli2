@@ -61,7 +61,7 @@ class EventQueue{
         this.process()
     }
 
-    addRule(event,errormessage,cb:(e:any) => void){
+    addRule(event,errormessage,cb:(e:any) => boolean){
 
     }
 }

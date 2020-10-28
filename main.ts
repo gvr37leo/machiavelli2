@@ -16,7 +16,8 @@
 /// <reference path="./views/playerview.ts" />
 /// <reference path="./views/carddisplayview.ts" />
 /// <reference path="./views/modal.ts" />
-
+/// <reference path="./networklayer/client.ts" />
+/// <reference path="./networklayer/server.ts" />
 
 
 let {playerStore,roleStore,cardStore} = genDB()
