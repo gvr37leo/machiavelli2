@@ -20,18 +20,18 @@ class BoardView{
             </div>
             <div style="border:1px solid black; margin:10px; min-height:300px;" id="buildingcontainer">
             </div>
-            <div id="dashboard" style="border:1px solid black; border-radius:3px; display:flex; justify-content:space-evenly;">
-                <div>
+            <div id="dashboard" style="border:1px solid black; padding: 10px; border-radius:3px; display:flex; justify-content:space-evenly;">
+                <div style="display:flex; flex-direction:column; align-items: center;">
                     money
                     <div id="money"></div>
                 </div>
-                <div>
+                <div style="display:flex; flex-direction:column; align-items: center;">
                     role
                     <div id="playerrole"></div>
                 </div>
                 <button id="showhand">showhand</button>
                 <button id="specialability">specialability</button>
-                <div><button id="passbutton">pass</button></div>
+                <button id="passbutton">pass</button>
             </div>
         </div>
         `)
@@ -55,7 +55,7 @@ class BoardView{
         this.money.innerText = player.money as any
         this.playerrole.innerText = playerroles.map(r => r.name).join(',')
         this.loadedPlayer = player
-        this.cdv.loadCards(player.buildings)
+        this.cdv.loadCards(player.buildings,false)
 
 
     }

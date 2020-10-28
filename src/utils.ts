@@ -12,10 +12,11 @@ function removeval<T>(arr:T[],val:number):T{
     return arr.splice(index,1)[0]
 }
 
+var rng = new RNG(0)
 function shuffle(array:any[]){
     var currentIndex = array.length, temporaryValue, randomIndex;
     while (0 !== currentIndex) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
+        randomIndex = Math.floor(rng.norm() * currentIndex);
         currentIndex -= 1;
 
         temporaryValue = array[currentIndex];
@@ -36,6 +37,6 @@ function count(arr,cb){
     return count
 }
 
-function any(){
-    
+function any<T>(arr:T[],cb:(item:T) => boolean){
+    return arr.findIndex(i => cb(i)) >= 0
 }

@@ -18,6 +18,7 @@
 /// <reference path="./views/modal.ts" />
 /// <reference path="./networklayer/client.ts" />
 /// <reference path="./networklayer/server.ts" />
+/// <reference path="./views/wrapperList.ts" />
 
 
 let {playerStore,roleStore,cardStore} = genDB()
@@ -58,11 +59,11 @@ manager.outputEvents.listen((e) => {
 manager.setupListeners()
 manager.start()
 
-// mulliganview.confirmchoice([true,false,false,false,false])
-// mulliganview.confirmchoice([true,false,false,false])
-// mulliganview.confirmchoice([true,false,false])
-// mulliganview.confirmchoice([true,false])
-// mulliganview.confirmchoice([true,false])
+mulliganview.confirmchoice([true,false,false,false,false])
+mulliganview.confirmchoice([true,false,false,false])
+mulliganview.confirmchoice([true,false,false])
+mulliganview.confirmchoice([true,false])
+mulliganview.confirmchoice([true,false])
 
 
 

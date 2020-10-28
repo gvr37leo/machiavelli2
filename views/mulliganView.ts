@@ -1,3 +1,11 @@
+
+class MulliganData{
+    id:number
+    min:number
+    max:number
+    options:SelectOption[]
+}
+
 class MulliganView{
     rendermap = new Map<string,(val:any) => HTMLElement>()
     onMulliganConfirmed = new EventSystem<{mulliganid:number,chosenoptions:boolean[]}>()
@@ -5,7 +13,7 @@ class MulliganView{
     itemscontainer: HTMLElement
     confirmbutton: HTMLElement
 
-    choices:boolean[] = []
+    // choices:boolean[] = []
     mulligandata: MulliganData
     modal: Modal
     wrappers: MulliganItemWrapper[]
@@ -15,8 +23,15 @@ class MulliganView{
         this.modal.attachtodocument()
         
         this.root = string2html(`
-            <div>
-                <div id="items" style="display: flex; justify-content: space-around;">
+            <div style="    display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;">
+                <div id="items" style="display: flex; flex-wrap:wrap; justify-content: space-around;">
                     
                 </div>
                 <div style="display: flex; justify-content: center;">
@@ -35,7 +50,8 @@ class MulliganView{
         })
 
         this.confirmbutton.addEventListener('click',(e) => {
-            this.confirmchoice(this.choices)
+            var choices = this.wrappers.map(w => w.selected)
+            this.confirmchoice(choices)
 
         })
 
@@ -78,7 +94,7 @@ class MulliganView{
     display(data:MulliganData){
         this.mulligandata = data
         this.wrappers = []
-        this.choices = new Array(data.options.length).fill(false)
+        // this.choices = new Array(data.options.length).fill(false)
         this.itemscontainer.innerHTML = ''
         for (let i = 0; i < data.options.length; i++) {
             const option = data.options[i];
@@ -87,15 +103,10 @@ class MulliganView{
             this.wrappers.push(wrapper)
             wrapper.setItem(html)
 
-            html.addEventListener('click',(e) => {
+            wrapper.itemcontainer.addEventListener('click', () => {
                 if(this.mulligandata.min == 1 && this.mulligandata.max == 1){
-                    
-                    this.choices.forEach((v,j) => {
-                        this.setChoice(j,false)    
-                    })
-                    this.setChoice(i,true)
-                }else{
-                    this.setChoice(i,!this.choices[i])
+                    this.wrappers.forEach(w => w.deselect())
+                    wrapper.select()
                 }
             })
 
@@ -104,67 +115,15 @@ class MulliganView{
         this.modal.setAndShow(this.root)
     }
 
-    setChoice(index,val){
-        this.choices[index] = val
-        if(val){
-            this.wrappers[index].select()
-        }else{
-            this.wrappers[index].deselect()
-        }
+    // setChoice(index,val){
+    //     this.choices[index] = val
+    //     if(val){
+    //         this.wrappers[index].select()
+    //     }else{
+    //         this.wrappers[index].deselect()
+    //     }
         
-    }
+    // }
 }
 
-class MulliganData{
-    id:number
-    min:number
-    max:number
-    options:SelectOption[]
-}
 
-class MulliganItemWrapper{
-
-    selected = false
-    root: HTMLElement
-    itemcontainer: HTMLElement
-    selectbutton: HTMLElement
-
-    constructor(){
-        this.root = string2html(`
-            <div>
-                <div id="itemcontainer" class="itemcontainer"></div>
-                <div style="display: flex; justify-content: center;">
-                    <button id="selectbutton">select</button>
-                </div>
-            </div>
-        `)
-
-        this.itemcontainer = this.root.querySelector('#itemcontainer')
-        this.selectbutton = this.root.querySelector('#selectbutton')
-    }
-
-    setItem(element:HTMLElement){
-        this.itemcontainer.innerHTML = ''
-        this.itemcontainer.appendChild(element)
-    }
-
-    toggle(){
-        this.selected = !this.selected
-        if(this.selected){
-            this.itemcontainer.classList.add('selected')
-        }else{
-            this.itemcontainer.classList.remove('selected')
-        }
-    }
-
-    deselect(){
-        this.selected = false
-        this.itemcontainer.classList.remove('selected')
-    }
-
-    select(){
-        this.selected = true
-        this.itemcontainer.classList.add('selected')
-    }
-
-}

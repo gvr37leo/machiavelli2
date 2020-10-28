@@ -5,6 +5,7 @@ class EventQueue{
     listeners:{id:number, type: string; cb: (data: any) => void; }[]
     events:{type:string,data:any}[]
     onProcessFinished = new EventSystem<any>()
+    rules:{event,error,rulecb}[] = []
 
     constructor(){
         this.listeners = []
@@ -38,9 +39,16 @@ class EventQueue{
         while(this.events.length > 0){
             try {
                 let current = this.events.shift()
-                var listeners = this.listeners.filter(l => l.type == current.type)
-                for(var listener of listeners){
-                    listener.cb(current.data)
+                
+                let matchingrules = this.rules.filter(r => r.event == current.type)
+                let offendingrules = matchingrules.filter(r => r.rulecb(current.data) == false)
+                if(offendingrules.length == 0){
+                    var listeners = this.listeners.filter(l => l.type == current.type)
+                    for(var listener of listeners){
+                        listener.cb(current.data)
+                    }
+                }else{
+                    offendingrules.forEach(r => console.log(r.error))
                 }
             } catch (error) {
                 console.log(error)
@@ -61,7 +69,7 @@ class EventQueue{
         this.process()
     }
 
-    addRule(event,errormessage,cb:(e:any) => boolean){
-
+    addRule(event,error,rulecb:(e:any) => boolean){
+        this.rules.push({event,error,rulecb})
     }
 }
