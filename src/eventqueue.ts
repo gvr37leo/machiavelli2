@@ -60,4 +60,8 @@ class EventQueue{
         this.add(type,data)
         this.process()
     }
+
+    addRule(event,errormessage,cb:(e:any) => void){
+
+    }
 }

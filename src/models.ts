@@ -25,6 +25,7 @@ class Role{
     name
     color
     image
+    specialUsed:boolean
 }
 
 class Player{

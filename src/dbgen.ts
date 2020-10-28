@@ -84,6 +84,7 @@ function createRole(name,color,image):Role{
         color,
         image,
         player:null,
+        specialUsed:false,
     }
 }
 
