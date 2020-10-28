@@ -18,7 +18,7 @@ class BoardView{
                 <div id="playerlist"></div>
                 <div style="display:flex;" id="rolelist"></div>
             </div>
-            <div style="border:1px solid black; margin:10px;" id="buildingcontainer">
+            <div style="border:1px solid black; margin:10px; min-height:300px;" id="buildingcontainer">
             </div>
             <div id="dashboard" style="border:1px solid black; border-radius:3px; display:flex; justify-content:space-evenly;">
                 <div>
@@ -50,9 +50,10 @@ class BoardView{
     }
 
     loadDashboard(player:Player){
-        var role = roleStore.get(player.id)
+        var playerroles = roleStore.list().filter(r => r.player == player.id)
+        // var role = roleStore.get(player.id)
         this.money.innerText = player.money as any
-        this.playerrole.innerText = role.name
+        this.playerrole.innerText = playerroles.map(r => r.name).join(',')
         this.loadedPlayer = player
         this.cdv.loadCards(player.buildings)
 
