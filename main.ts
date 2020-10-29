@@ -18,52 +18,43 @@
 /// <reference path="./views/modal.ts" />
 /// <reference path="./networklayer/client.ts" />
 /// <reference path="./networklayer/server.ts" />
+/// <reference path="./networklayer/wire.ts" />
 /// <reference path="./views/wrapperList.ts" />
-
-
-let {playerStore,roleStore,cardStore} = genDB()
-
-
-let manager = new GameManager()
-let mulliganview = new MulliganView()
-let gameview = new GameView(manager.game)
-gameview.board.loadDashboard(playerStore.list()[0])
-
-var mulliganevents = []
-
-mulliganview.onMulliganConfirmed.listen(e => {
-    var mulligandata = {
-        mulliganid:e.val.mulliganid,
-        chosenoptions:e.val.chosenoptions,
-    }
-    mulliganevents.push(mulligandata)
-    manager.eventQueue.addAndTrigger('mulliganconfirmed',mulligandata)
-})
-
-function logMulliganData(){
-    console.log(JSON.stringify(mulliganevents));
-}
-
-manager.outputEvents.listen((e) => {
-    if(e.val.type == 'mulligan'){
-        mulliganview.display(e.val.data)
-    }
-
-    if(e.val.type == 'dataupdate'){
-        gameview.updateView()
-    }
-})
+/// <reference path="./src/gameDB.ts" />
 
 
 
-manager.setupListeners()
-manager.start()
 
-mulliganview.confirmchoice([true,false,false,false,false])
-mulliganview.confirmchoice([true,false,false,false])
-mulliganview.confirmchoice([true,false,false])
-mulliganview.confirmchoice([true,false])
-mulliganview.confirmchoice([true,false])
+var wire = new Wire()
+
+var server = new Server(wire)
+
+var clients = [
+    new Client(wire),
+    new Client(wire),
+    new Client(wire),
+    new Client(wire),
+]
+
+document.body.appendChild(gameview.root)
+
+
+
+
+
+
+
+
+
+
+
+
+
+// mulliganview.confirmchoice([true,false,false,false,false])
+// mulliganview.confirmchoice([true,false,false,false])
+// mulliganview.confirmchoice([true,false,false])
+// mulliganview.confirmchoice([true,false])
+// mulliganview.confirmchoice([true,false])
 
 
 
@@ -74,7 +65,7 @@ mulliganview.confirmchoice([true,false])
 //crownwearer set
 //player 0 rolepick
 
-document.body.appendChild(gameview.root)
+
 
 
 

@@ -5,8 +5,16 @@ class GameView{
     roleviews:RoleView[] = []
     carddisplay: CardDisplayView
     modal: Modal
+    mulliganview: MulliganView
+    outputEvents = new EventSystem<GameEvent>()
+
 
     constructor(game:Game){
+        this.mulliganview = new MulliganView()
+
+        
+
+
         this.modal = new Modal()
         document.body.appendChild(this.modal.rootelement)
 
@@ -17,7 +25,7 @@ class GameView{
         this.root = this.board.root
 
         this.carddisplay.onCardPlayed.listen((e) => {
-            manager.eventQueue.addAndTrigger('build',{
+            this.outputGameEvent('build',{
                 playerid:manager.getActivePlayer().id,
                 cardid:e.val,
             })
@@ -31,11 +39,11 @@ class GameView{
         })
 
         this.board.specialability.addEventListener('click',() => {
-            manager.eventQueue.addAndTrigger('specialability',{})
+            this.outputGameEvent('specialability',{})
         })
 
         this.board.passbutton.addEventListener('click',() => {
-            manager.eventQueue.addAndTrigger('pass',{})
+            this.outputGameEvent('pass',{})
         })
 
         for(let player of playerStore.list()){
@@ -67,5 +75,9 @@ class GameView{
         for(var role of this.roleviews){
             role.setHighlight(role.role.id == manager.game.roleturn)
         }
+    }
+
+    outputGameEvent(type,data){
+        this.outputEvents.trigger({type,data})
     }
 }
