@@ -4,6 +4,7 @@ class Server{
 
     constructor(public wire:Wire){
         let {playerStore,roleStore,cardStore} = genDB()
+        
         let manager = new GameManager()
         manager.setupListeners()
         manager.start()

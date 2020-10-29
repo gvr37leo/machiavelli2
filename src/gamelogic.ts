@@ -403,6 +403,15 @@ class GameManager{
         player.money += samecoloredbuildings.length
     }
 
+    serialize():GameDB{
+
+        var data = new GameDB()
+        data.game = copy(this.game) 
+        data.players = 
+        data.roles
+        data.cards
+    }
+
 }
 
 class SelectOption{
