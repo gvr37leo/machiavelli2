@@ -9,7 +9,7 @@ class GameView{
     outputEvents = new EventSystem<GameEvent>()
 
 
-    constructor(game:Game){
+    constructor(public gamedb:GameDB){
         this.mulliganview = new MulliganView()
 
         
@@ -26,7 +26,7 @@ class GameView{
 
         this.carddisplay.onCardPlayed.listen((e) => {
             this.outputGameEvent('build',{
-                playerid:manager.getActivePlayer().id,
+                playerid:determineActivePlayer(this.gamedb).id,
                 cardid:e.val,
             })
             this.modal.hide()
@@ -46,7 +46,7 @@ class GameView{
             this.outputGameEvent('pass',{})
         })
 
-        for(let player of playerStore.list()){
+        for(let player of this.gamedb.playerStore.list()){
             let playerview = new PlayerView()
             this.playerviews.push(playerview)
             playerview.set(player)
@@ -56,7 +56,7 @@ class GameView{
             })
         }
 
-        for(let role of roleStore.list()){
+        for(let role of this.gamedb.roleStore.list()){
             let roleview = new RoleView()
             this.roleviews.push(roleview)
             roleview.set(role)
@@ -65,19 +65,26 @@ class GameView{
     }
 
     updateView(){
-        this.board.loadDashboard(manager.getActivePlayer())
+        this.board.loadDashboard(determineActivePlayer(this.gamedb))
 
         for(var player of this.playerviews){
-            player.setCrownWearer(player.player.id == manager.game.crownwearer)
-            player.setHighlight(player.player.id == manager.getActivePlayer().id)
+            player.setCrownWearer(player.player.id == this.gamedb.game.crownwearer)
+            player.setHighlight(player.player.id == determineActivePlayer(this.gamedb).id)
         }
 
         for(var role of this.roleviews){
-            role.setHighlight(role.role.id == manager.game.roleturn)
+            role.setHighlight(role.role.id == this.gamedb.game.roleturn)
         }
     }
 
     outputGameEvent(type,data){
         this.outputEvents.trigger({type,data})
     }
+}
+
+function determineActivePlayer(gamedb:GameDB){
+    var role = gamedb.roleStore.get(gamedb.game.roleturn)
+    var player = gamedb.playerStore.get(role.player)
+    return player
+    
 }

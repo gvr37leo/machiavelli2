@@ -1,25 +1,70 @@
+class ClientRegistration{
+    id:number
+
+    constructor(
+        public socket,
+    ){
+
+    }
+}
+
 class Server{
 
-    onReceived = new EventSystem()
+    onReceived = new EventSystem<any>()
+    wss: any
+    gamemanager: GameManager
+    clientStore:Store<ClientRegistration>
 
     constructor(public wire:Wire){
-        let {playerStore,roleStore,cardStore} = genDB()
-        
-        let manager = new GameManager()
-        manager.setupListeners()
-        manager.start()
+        this.wss = new WSServer({port:8080})
+        this.wss.on('connection',(ws) => {
+            let client = new ClientRegistration(ws)
+            this.clientStore.add(client)
 
-        mulliganview.onMulliganConfirmed.listen(e => {
-            var mulligandata = {
-                mulliganid:e.val.mulliganid,
-                chosenoptions:e.val.chosenoptions,
-            }
-            manager.eventQueue.addAndTrigger('mulliganconfirmed',mulligandata)
+            ws.send('join',{clientid:client.id})
+
+            ws.on('message',(message) => {
+                this.onReceived.trigger(JSON.parse(message))
+            })
+
+            ws.on('close', () => {
+                this.clientStore.remove(client.id)
+            })
         })
+
+        let {playerStore,roleStore,cardStore} = genDB()
+        var gamedb = new GameDB()
+        gamedb.cards = cardStore.list()
+        gamedb.cardStore = cardStore
+        gamedb.players = playerStore.list()
+        gamedb.playerStore = playerStore
+        gamedb.roles = roleStore.list()
+        gamedb.roleStore = roleStore
+        this.gamemanager = new GameManager(gamedb)
+        this.gamemanager.setupListeners()
+        this.gamemanager.start()
+        this.gamemanager.outputEvents.listen(e => {
+            this.sendAll(e.val.type,e.val.data)
+        })
+
+        this.onReceived.listen(e => {
+            if(e.val.type == 'mulliganconfirmed'){
+                var mulligandata = {
+                    mulliganid:e.val.mulliganid,
+                    chosenoptions:e.val.chosenoptions,
+                }
+                this.gamemanager.eventQueue.addAndTrigger('mulliganconfirmed',mulligandata)
+            }
+        })
+
     }
 
     sendAll(event,data){
-
+        this.wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send({event,data});
+              }
+        })
     }
 
     send(event,client,data){

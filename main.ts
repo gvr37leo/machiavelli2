@@ -36,7 +36,7 @@ var clients = [
     new Client(wire),
 ]
 
-document.body.appendChild(gameview.root)
+document.body.appendChild(clients[0].gameview.root)
 
 
 

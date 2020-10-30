@@ -1,29 +1,55 @@
 class Client{
 
-    onReceived = new EventSystem()
+    onReceived = new EventSystem<any>()
+    socket: WebSocket;
+    gameview: GameView;
+    clientid:number
 
     constructor(public wire:Wire){
-        
-        let gameview = new GameView(manager.game)
-        gameview.board.loadDashboard(playerStore.list()[0])
+        this.socket = new WebSocket('ws://localhost:8000');
+        this.socket.addEventListener('message',(e) => {
+            this.onReceived.trigger(e.data)
+        })
 
-        manager.outputEvents.listen((e) => {
+        var db = this.getDataBase()
+        this.gameview = new GameView(db)
+        this.gameview.board.loadDashboard(db.players[0])
+        this.onReceived.listen((e) => {
             if(e.val.type == 'mulligan'){
-                gameview.mulliganview.display(e.val.data)
+                this.gameview.mulliganview.display(e.val.data)
             }
         
             if(e.val.type == 'dataupdate'){
-                gameview.updateView()
+                this.gameview.updateView()
             }
+        })
+
+        this.gameview.outputEvents.listen(e => {
+            this.send(e.val.type,e.val.data)
         })
     }
 
+    join(){
+
+    }
+
     send(event,data){
-        
+        this.socket.send(JSON.stringify({type:event,data:data}))
     }
 
-    getDataBase(){
-        
+    getDataBase():GameDB{
+        var db = this.convertDB(null)
+        return db
     }
 
+    
+    convertDB(gamedb:GameDB){
+        gamedb.cardStore = new Store()
+        gamedb.cardStore.set(gamedb.cards)
+        gamedb.playerStore = new Store()
+        gamedb.playerStore.set(gamedb.players)
+        gamedb.roleStore = new Store()
+        gamedb.roleStore.set(gamedb.roles)
+        return gamedb
+    }
 }

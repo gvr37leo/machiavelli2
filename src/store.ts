@@ -8,9 +8,19 @@ class Store<T>{
 
     set(list:T[]){
         for(let item of list){
-            item['id'] = this.idcounter++
-            this.map.set(item['id'],item)
+            this.add(item)
         }
+    }
+
+    add(item:T){
+        item['id'] = this.idcounter++
+        this.map.set(item['id'],item)
+    }
+
+    remove(id){
+        var item = this.map.get(id)
+        this.map.delete(id)
+        return item
     }
 
     list(){

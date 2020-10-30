@@ -20,10 +20,10 @@ class GameEvent{
 class GameManager{
 
     eventQueue = new EventQueue()
-    game = new Game()
+    // game = new Game()
     outputEvents = new EventSystem<GameEvent>()
 
-    constructor(){
+    constructor(public gamedb:GameDB){
 
     }
 
@@ -32,21 +32,21 @@ class GameManager{
 
 
         this.eventQueue.listen('gamestart',(data) => {
-            this.game.deck = cardStore.list().map(c => c.id)
-            shuffle(this.game.deck)
+            this.gamedb.game.deck = this.gamedb.cardStore.list().map(c => c.id)
+            shuffle(this.gamedb.game.deck)
 
-            for(var role of roleStore.list()){
+            for(var role of this.gamedb.roleStore.list()){
                 role.player = null
             }
 
             
-            for(let player of playerStore.list()){
+            for(let player of this.gamedb.playerStore.list()){
                 player.money += 2
-                player.hand.push(...this.game.deck.splice(0,2))
+                player.hand.push(...this.gamedb.game.deck.splice(0,2))
             }
-            this.game.crownwearer = 0
-            this.game.burgledRole = null
-            this.game.murderedRole = null
+            this.gamedb.game.crownwearer = 0
+            this.gamedb.game.burgledRole = null
+            this.gamedb.game.murderedRole = null
             this.eventQueue.add('roundstart',{})
             //4 gebouwkaarten
             //2 goud
@@ -62,17 +62,17 @@ class GameManager{
                 7:0,
             }
 
-            for(var role of roleStore.list()){
+            for(var role of this.gamedb.roleStore.list()){
                 role.specialUsed = false
             }
 
-            var players = playerStore.list()
-            this.game.rolestopick = roleStore.list().map(r => r.id)
-            shuffle(this.game.rolestopick)
-            var openOnTable = this.game.rolestopick.splice(0,charttable[players.length])
+            var players = this.gamedb.playerStore.list()
+            this.gamedb.game.rolestopick = this.gamedb.roleStore.list().map(r => r.id)
+            shuffle(this.gamedb.game.rolestopick)
+            var openOnTable = this.gamedb.game.rolestopick.splice(0,charttable[players.length])
             
             //if openontable contains king swap it with random card out of deck
-            var kingshown = this.game.rolestopick.splice(0,1)
+            var kingshown = this.gamedb.game.rolestopick.splice(0,1)
 
             this.eventQueue.add('rolepick',{
                 player:0,
@@ -82,13 +82,13 @@ class GameManager{
         this.eventQueue.listen('rolepick',(data) => {
             // data.player
 
-            this.pickOne(this.game.rolestopick,'role',(pickedroleid,unpicked) => {
-                var role = roleStore.get(pickedroleid)
+            this.pickOne(this.gamedb.game.rolestopick,'role',(pickedroleid,unpicked) => {
+                var role = this.gamedb.roleStore.get(pickedroleid)
                 role.player = data.player
-                this.game.rolestopick = unpicked
+                this.gamedb.game.rolestopick = unpicked
                 var nextplayer = data.player + 1
 
-                if(nextplayer == playerStore.list().length){//todo dit moet niet hardcoded
+                if(nextplayer == this.gamedb.playerStore.list().length){//todo dit moet niet hardcoded
                     this.setRoleTurn(0)
                 }else{
                     this.eventQueue.add('rolepick',{
@@ -103,19 +103,19 @@ class GameManager{
 
             
 
-            let role = roleStore.get(data.role)
-            if(role.player == null || this.game.murderedRole == data.role){
+            let role = this.gamedb.roleStore.get(data.role)
+            if(role.player == null || this.gamedb.game.murderedRole == data.role){
                 this.incrementRoleTurn()
             }else{
                 
 
-                let playerOfCurrentRole = playerStore.get(role.player)
+                let playerOfCurrentRole = this.gamedb.playerStore.get(role.player)
                 playerOfCurrentRole.buildactions = 1
-                if(this.game.burgledRole != null && this.game.burgledRole == data.role){
-                    let thiefrole = roleStore.list().find(r => r.name == 'dief')
-                    let burgledrole = roleStore.get(this.game.burgledRole)
-                    let thiefplayer = playerStore.get(thiefrole.player)
-                    let burgledplayer = playerStore.get(burgledrole.player)
+                if(this.gamedb.game.burgledRole != null && this.gamedb.game.burgledRole == data.role){
+                    let thiefrole = this.gamedb.roleStore.list().find(r => r.name == 'dief')
+                    let burgledrole = this.gamedb.roleStore.get(this.gamedb.game.burgledRole)
+                    let thiefplayer = this.gamedb.playerStore.get(thiefrole.player)
+                    let burgledplayer = this.gamedb.playerStore.get(burgledrole.player)
                     thiefplayer.money += burgledplayer.money
                     burgledplayer.money = 0
                     //transfer the money from the burgledrole player to the thiefrole player
@@ -128,10 +128,10 @@ class GameManager{
                         // roleturn is increased via pass button
                         this.updateClients()
                     }else if(pick == 'cards'){
-                        let mulligancards = this.game.deck.splice(0,2)
+                        let mulligancards = this.gamedb.game.deck.splice(0,2)
                         this.pickOne(mulligancards,'card',(cardid,unpicked) => {
                             playerOfCurrentRole.hand.push(cardid)
-                            this.game.discardPile.push(...unpicked)
+                            this.gamedb.game.discardPile.push(...unpicked)
                             this.updateClients()
                         })
                     }
@@ -140,33 +140,33 @@ class GameManager{
         })
 
         this.eventQueue.addRule('specialability','specialbility already used',(val) => {
-            var role = roleStore.get(this.game.roleturn)
+            var role = this.gamedb.roleStore.get(this.gamedb.game.roleturn)
             return role.specialUsed == false
         })
         this.eventQueue.listen('specialability',(data) => {
-            var role = roleStore.get(this.game.roleturn)
+            var role = this.gamedb.roleStore.get(this.gamedb.game.roleturn)
             role.specialUsed = true
-            var playerOfCurrentRole = playerStore.get(role.player)
+            var playerOfCurrentRole = this.gamedb.playerStore.get(role.player)
             
 
             //role specific stuff
             if(role.name == 'moordenaar'){
-                let possibleroles = roleStore.list().slice(1,8).map(r => r.id)//roles after moordenaar
+                let possibleroles = this.gamedb.roleStore.list().slice(1,8).map(r => r.id)//roles after moordenaar
                 this.pickOne(possibleroles,'role',(roleid) => {
-                    this.game.murderedRole = roleid
+                    this.gamedb.game.murderedRole = roleid
                 })
                 
             }else if(role.name == 'dief'){
-                let possibleroles = roleStore.list().slice(2,8).map(r => r.id)//roles after dief
+                let possibleroles = this.gamedb.roleStore.list().slice(2,8).map(r => r.id)//roles after dief
                 this.pickOne(possibleroles,'role',(roleid) => {
-                    this.game.burgledRole = roleid
+                    this.gamedb.game.burgledRole = roleid
                 })
             }else if(role.name == 'magier'){
                 this.pickOne(['swapplayer','swapdeck'],'text',(a,b,[swapplayer,swapdeck]) => {
                     if(swapplayer){
-                        let possibleplayers = playerStore.list().filter(p => p.id != playerOfCurrentRole.id).map(r => r.id)//everyone except self
+                        let possibleplayers = this.gamedb.playerStore.list().filter(p => p.id != playerOfCurrentRole.id).map(r => r.id)//everyone except self
                         this.pickOne(possibleplayers,'player',(playerid) => {
-                            let player = playerStore.get(playerid)
+                            let player = this.gamedb.playerStore.get(playerid)
                             let temp = player.hand
                             player.hand = playerOfCurrentRole.hand
                             playerOfCurrentRole.hand = temp
@@ -175,15 +175,15 @@ class GameManager{
                     }else if(swapdeck){
                         this.pickMultiple(0,10,playerOfCurrentRole.hand,'card',(chosen,unchosen) => {
                             playerOfCurrentRole.hand = unchosen
-                            playerOfCurrentRole.hand.push(...this.game.deck.splice(0,chosen.length))
-                            this.game.discardPile.push(...chosen)
+                            playerOfCurrentRole.hand.push(...this.gamedb.game.deck.splice(0,chosen.length))
+                            this.gamedb.game.discardPile.push(...chosen)
                             this.updateClients()
                         })
                     }
                     
                 })
             }else if(role.name == 'koning'){
-                this.game.crownwearer = playerOfCurrentRole.id
+                this.gamedb.game.crownwearer = playerOfCurrentRole.id
                 this.processTaxes(role.id)
                 this.updateClients()
             }else if(role.name == 'prediker'){
@@ -194,22 +194,22 @@ class GameManager{
                 this.processTaxes(role.id)
                 this.updateClients()
             }else if(role.name == 'bouwmeester'){
-                playerOfCurrentRole.hand.push(...this.game.deck.splice(0,2))
+                playerOfCurrentRole.hand.push(...this.gamedb.game.deck.splice(0,2))
                 playerOfCurrentRole.buildactions = 3
                 this.updateClients()
             }else if(role.name == 'condotierre'){
                 this.processTaxes(role.id)
 
 
-                let possibleplayers = playerStore.list().map(p => p.id)
-                var predikerplayer = roleStore.list().find(r => r.name == 'prediker').player
+                let possibleplayers = this.gamedb.playerStore.list().map(p => p.id)
+                var predikerplayer = this.gamedb.roleStore.list().find(r => r.name == 'prediker').player
                 removeval(possibleplayers,predikerplayer)
                 
 
                 this.pickOne(possibleplayers,'player',(playerid) => {
-                    let targetedPlayer = playerStore.get(playerid)
+                    let targetedPlayer = this.gamedb.playerStore.get(playerid)
                     this.pickOne(targetedPlayer.buildings,'card',(buildingid,unchosen) => {
-                        let building = cardStore.get(buildingid)
+                        let building = this.gamedb.cardStore.get(buildingid)
                         playerOfCurrentRole.money -= building.cost - 1
                         targetedPlayer.buildings = unchosen
                         this.updateClients()
@@ -220,12 +220,12 @@ class GameManager{
         })
 
         this.eventQueue.addRule('build','not enough money',({playerid,cardid}) => {
-            let player = playerStore.get(playerid)
-            let card = cardStore.get(cardid)
+            let player = this.gamedb.playerStore.get(playerid)
+            let card = this.gamedb.cardStore.get(cardid)
             return card.cost <= player.money 
         })
         this.eventQueue.addRule('build','cant build anymore',({playerid,cardid}) => {
-            let player = playerStore.get(playerid)
+            let player = this.gamedb.playerStore.get(playerid)
             return player.buildactions > 0
         })
         this.eventQueue.listen('build',(data) => {
@@ -253,23 +253,23 @@ class GameManager{
     updateClients(){
         this.outputEvents.trigger({
             type:'dataupdate',
-            data:{},
+            data:this.serialize(),
         })
     }
 
     getActivePlayer(){
-        var role = roleStore.get(this.game.roleturn)
-        var player = playerStore.get(role.player)
+        var role = this.gamedb.roleStore.get(this.gamedb.game.roleturn)
+        var player = this.gamedb.playerStore.get(role.player)
         return player
     }
 
     calculatePlayerScores(){
-        for(var player of playerStore.list()){
-            var buildings = player.buildings.map(cid => cardStore.get(cid))
+        for(var player of this.gamedb.playerStore.list()){
+            var buildings = player.buildings.map(cid => this.gamedb.cardStore.get(cid))
             var buildingscore = buildings.reduce((p,c) => p + c.points,0)
             var finishscore = 0
             if(buildings.length >= 8){
-                if(this.game.firstFinishedPlayer == player.id){
+                if(this.gamedb.game.firstFinishedPlayer == player.id){
                     finishscore = 4
                 }else{
                     finishscore = 2
@@ -294,8 +294,8 @@ class GameManager{
     }
 
     isGameOver():boolean{
-        for(var player of playerStore.list()){
-            var buildings = player.buildings.map(cid => cardStore.get(cid))
+        for(var player of this.gamedb.playerStore.list()){
+            var buildings = player.buildings.map(cid => this.gamedb.cardStore.get(cid))
             if(buildings.length >= 8){
                 return true
             }
@@ -308,8 +308,8 @@ class GameManager{
     }
 
     private payForCard(playerid:number,cardid:number){
-        let player = playerStore.get(playerid)
-        let card = cardStore.get(cardid)
+        let player = this.gamedb.playerStore.get(playerid)
+        let card = this.gamedb.cardStore.get(cardid)
         
         //check is done already at event level
         removeval(player.hand,cardid)
@@ -319,25 +319,25 @@ class GameManager{
     }
 
     setRoleTurn(roleid){
-        this.game.roleturn = roleid
+        this.gamedb.game.roleturn = roleid
         this.eventQueue.add('roleturn',{role:roleid})
     }
 
     incrementRoleTurn(){
 
-        this.game.roleturn++
-        if(this.game.roleturn >= roleStore.list().length){
+        this.gamedb.game.roleturn++
+        if(this.gamedb.game.roleturn >= this.gamedb.roleStore.list().length){
             if(this.isGameOver()){
                 this.calculatePlayerScores()
                 
-                var sortedplayers = playerStore.list().sort((a,b) => a.score - b.score)
+                var sortedplayers = this.gamedb.playerStore.list().sort((a,b) => a.score - b.score)
                 var winner = last(sortedplayers)
                 console.log(winner);
             }else{
                 this.eventQueue.add('roundstart',{})
             }
         }else{
-            this.eventQueue.add('roleturn',{role:this.game.roleturn})
+            this.eventQueue.add('roleturn',{role:this.gamedb.game.roleturn})
         }
     }
 
@@ -396,9 +396,9 @@ class GameManager{
     }
 
     processTaxes(roleid){
-        let role = roleStore.get(roleid)
-        let player = playerStore.get(role.player)
-        let buildings = player.buildings.map(bid => cardStore.get(bid))
+        let role = this.gamedb.roleStore.get(roleid)
+        let player = this.gamedb.playerStore.get(role.player)
+        let buildings = player.buildings.map(bid => this.gamedb.cardStore.get(bid))
         let samecoloredbuildings = buildings.filter(b => b.role == roleid)
         player.money += samecoloredbuildings.length
     }
@@ -406,10 +406,11 @@ class GameManager{
     serialize():GameDB{
 
         var data = new GameDB()
-        data.game = copy(this.game) 
-        data.players = 
-        data.roles
-        data.cards
+        data.game = copy(this.gamedb.game) 
+        data.players = this.gamedb.playerStore.list()
+        data.roles = this.gamedb.roleStore.list()
+        data.cards = this.gamedb.cardStore.list()
+        return data
     }
 
 }
