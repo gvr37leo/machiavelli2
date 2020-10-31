@@ -1,5 +1,25 @@
+var express = require('express')
+var app = express()
+
+app.use(express.static('./'))
+
+app.listen(8000, () => {
+    console.log('listening')
+})
+
+
+
+
+
+
+
+
+
+
+
 class ClientRegistration{
     id:number
+    playerid:number
 
     constructor(
         public socket,
@@ -20,6 +40,10 @@ class Server{
         this.wss.on('connection',(ws) => {
             let client = new ClientRegistration(ws)
             this.clientStore.add(client)
+            var player = new Player()
+            this.gamemanager.gamedb.playerStore.add(player)
+            client.playerid = player.id
+            //add player to game
 
             ws.send('join',{clientid:client.id})
 
@@ -28,6 +52,7 @@ class Server{
             })
 
             ws.on('close', () => {
+                this.gamemanager.gamedb.playerStore.remove(client.playerid)
                 this.clientStore.remove(client.id)
             })
         })
