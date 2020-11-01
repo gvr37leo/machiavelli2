@@ -1,7 +1,4 @@
-import { Player, Role, Card, Game } from "./models"
-import { Store } from "./store"
-
-export class GameDB{
+class GameDB{
     players:Player[]
     roles:Role[]
     cards:Card[]

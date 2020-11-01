@@ -1,4 +1,4 @@
-export class Store<T>{
+class Store<T>{
     idcounter = 0
     map = new Map<number,T>()
 

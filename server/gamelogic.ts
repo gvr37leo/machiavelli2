@@ -3,6 +3,10 @@
 //select player
 //select building
 
+import { EventQueue, EventSystem } from "./eventqueue"
+import { GameDB } from "./gameDB"
+import { shuffle, removeval, count, last, copy } from "./utils"
+import {} from './utils'
 //startofgame/moordenaar/dief
 //select role
 
@@ -11,13 +15,13 @@
 
 //start of round
 //select cards to buy
-class GameEvent{
+export class GameEvent{
     type:string
     data:any
 }
 
 
-class GameManager{
+export class GameManager{
 
     eventQueue = new EventQueue()
     // game = new Game()

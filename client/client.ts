@@ -5,7 +5,7 @@ class Client{
     gameview: GameView;
     clientid:number
 
-    constructor(public wire:Wire){
+    constructor(){
         this.socket = new WebSocket('ws://localhost:8000');
         this.socket.addEventListener('message',(e) => {
             this.onReceived.trigger(e.data)

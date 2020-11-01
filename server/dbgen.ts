@@ -1,5 +1,7 @@
+import { Card, Player, Role } from "./models"
+import { Store } from "./store"
 
-function genDB(){
+export function genDB(){
 
     let cardStore = new Store<Card>()
     let roleStore = new Store<Role>()

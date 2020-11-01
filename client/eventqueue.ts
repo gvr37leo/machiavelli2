@@ -1,6 +1,6 @@
 
 
-export class EventQueue{
+class EventQueue{
     idcounter = 0
     listeners:{id:number, type: string; cb: (data: any) => void; }[]
     events:{type:string,data:any}[]
@@ -71,38 +71,5 @@ export class EventQueue{
 
     addRule(event,error,rulecb:(e:any) => boolean){
         this.rules.push({event,error,rulecb})
-    }
-}
-
-export class PEvent<T>{
-    cbset:Set<(val:PEvent<T>) => void> = new Set()
-    constructor(public val:T){
-
-    }
-
-    static create<T>(val:T){
-        var e = new PEvent(val)
-        return e
-    }
-}
-
-export class EventSystem<T>{
-    cbs:((val:PEvent<T>) => void)[] = []
-
-    listen(cb:(val:PEvent<T>) => void){
-        this.cbs.push(cb)
-        return cb
-    }
-
-    trigger(val:T){
-        this.continueTrigger(new PEvent(val))
-    }
-
-    continueTrigger(e:PEvent<T>){
-        for (var cb of this.cbs) {
-            if(e.cbset.has(cb))continue
-            e.cbset.add(cb)
-            cb(e)
-        }
     }
 }

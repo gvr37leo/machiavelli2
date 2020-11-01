@@ -1,42 +1,27 @@
-/// <reference path="node_modules/vectorx/vector.ts" />
-/// <reference path="node_modules/utilsx/utils.ts" />
-/// <reference path="node_modules/eventsystemx/EventSystem.ts" />
-
-/// <reference path="./src/models.ts" />
-/// <reference path="./src/eventqueue.ts" />
-/// <reference path="./src/gamelogic.ts" />
-/// <reference path="./src/utils.ts" />
-/// <reference path="./views/mulliganView.ts" />
-/// <reference path="./src/store.ts" />
-/// <reference path="./src/dbgen.ts" />
-/// <reference path="./views/boardview.ts" />
-/// <reference path="./views/cardview.ts" />
-/// <reference path="./views/roleview.ts" />
-/// <reference path="./views/gameview.ts" />
-/// <reference path="./views/playerview.ts" />
-/// <reference path="./views/carddisplayview.ts" />
-/// <reference path="./views/modal.ts" />
-/// <reference path="./networklayer/client.ts" />
-/// <reference path="./networklayer/server.ts" />
-/// <reference path="./networklayer/wire.ts" />
-/// <reference path="./views/wrapperList.ts" />
-/// <reference path="./src/gameDB.ts" />
+/// <reference path="./models.ts" />
+/// <reference path="./eventqueue.ts" />
+/// <reference path="./mulliganView.ts" />
+/// <reference path="./store.ts" />
+/// <reference path="./boardview.ts" />
+/// <reference path="./cardview.ts" />
+/// <reference path="./roleview.ts" />
+/// <reference path="./gameview.ts" />
+/// <reference path="./playerview.ts" />
+/// <reference path="./carddisplayview.ts" />
+/// <reference path="./modal.ts" />
+/// <reference path="./client.ts" />
+/// <reference path="./wrapperList.ts" />
+/// <reference path="./gamedb.ts" />
+/// <reference path="../node_modules/eventsystemx/EventSystem.ts" />
+/// <reference path="../node_modules/utilsx/utils.ts" />
 
 
 
 
-var wire = new Wire()
 
-var server = new Server(wire)
+var client = new Client()
 
-var clients = [
-    new Client(wire),
-    new Client(wire),
-    new Client(wire),
-    new Client(wire),
-]
-
-document.body.appendChild(clients[0].gameview.root)
+document.body.appendChild(client.gameview.root)
 
 
 

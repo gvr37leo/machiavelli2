@@ -1,4 +1,4 @@
-class Game{
+export class Game{
     
 
     deck:number[] = []
@@ -19,7 +19,7 @@ class Game{
 
 }
 
-class Role{
+export class Role{
     id:number
     player
     name
@@ -28,7 +28,7 @@ class Role{
     specialUsed:boolean
 }
 
-class Player{
+export class Player{
     id:number
     name:string
     hand:number[]
@@ -38,7 +38,7 @@ class Player{
     buildactions:number
 }
 
-class Card{
+export class Card{
     id:number
     points
     isAction

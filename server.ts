@@ -1,5 +1,11 @@
 var express = require('express')
+
+import ws from 'ws'
+import { genDB } from './server/dbgen'
+import { GameManager } from './server/gamelogic'
+
 var app = express()
+
 
 app.use(express.static('./'))
 
@@ -35,8 +41,8 @@ class Server{
     gamemanager: GameManager
     clientStore:Store<ClientRegistration>
 
-    constructor(public wire:Wire){
-        this.wss = new WSServer({port:8080})
+    constructor(){
+        this.wss = new ws.Server({port:8080})
         this.wss.on('connection',(ws) => {
             let client = new ClientRegistration(ws)
             this.clientStore.add(client)
