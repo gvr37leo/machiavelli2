@@ -3,7 +3,7 @@ import { genDB } from './dbgen'
 import { EventSystem } from './eventqueue'
 import { GameDB } from './gameDB'
 import { GameManager } from './gamelogic'
-import { Player } from './models'
+import { Game, Player } from './models'
 import { Store } from './store'
 
 
@@ -49,6 +49,7 @@ export class Server{
 
         let {playerStore,roleStore,cardStore} = genDB()
         var gamedb = new GameDB()
+        gamedb.game = new Game()
         gamedb.cards = cardStore.list()
         gamedb.cardStore = cardStore
         gamedb.players = playerStore.list()

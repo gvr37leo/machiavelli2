@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "debug":"node --inspect -r ts-node/register server.ts",
     "startserver": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
