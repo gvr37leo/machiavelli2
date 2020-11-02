@@ -1,26 +1,10 @@
-var express = require('express')
-
 import ws from 'ws'
-import { genDB } from './server/dbgen'
-import { GameManager } from './server/gamelogic'
-
-var app = express()
-
-
-app.use(express.static('./'))
-
-app.listen(8000, () => {
-    console.log('listening')
-})
-
-
-
-
-
-
-
-
-
+import { genDB } from './dbgen'
+import { EventSystem } from './eventqueue'
+import { GameDB } from './gameDB'
+import { GameManager } from './gamelogic'
+import { Player } from './models'
+import { Store } from './store'
 
 
 class ClientRegistration{
@@ -34,7 +18,7 @@ class ClientRegistration{
     }
 }
 
-class Server{
+export class Server{
 
     onReceived = new EventSystem<any>()
     wss: any
