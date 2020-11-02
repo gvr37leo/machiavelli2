@@ -1,5 +1,5 @@
 import ws from 'ws'
-import { genDB } from './dbgen'
+import { createPlayer, genDB } from './dbgen'
 import { EventSystem } from './eventqueue'
 import { GameDB } from './gameDB'
 import { GameManager } from './gamelogic'
@@ -30,12 +30,10 @@ export class Server{
         this.wss.on('connection',(ws) => {
             let client = new ClientRegistration(ws)
             this.clientStore.add(client)
-            var player = new Player()
+            var player = createPlayer('random name')
             this.gamemanager.gamedb.playerStore.add(player)
             client.playerid = player.id
             //add player to game
-
-            ws.send('join',{clientid:client.id})
 
             ws.on('message',(message) => {
                 this.onReceived.trigger(JSON.parse(message))
@@ -64,21 +62,15 @@ export class Server{
         })
 
         this.onReceived.listen(e => {
-            if(e.val.type == 'mulliganconfirmed'){
-                var mulligandata = {
-                    mulliganid:e.val.mulliganid,
-                    chosenoptions:e.val.chosenoptions,
-                }
-                this.gamemanager.eventQueue.addAndTrigger('mulliganconfirmed',mulligandata)
-            }
+            this.gamemanager.eventQueue.addAndTrigger(e.val.type,e.val.data)
         })
 
     }
 
     sendAll(event,data){
         this.wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send({event,data});
+            if (client.readyState === ws.OPEN) {
+                client.send(JSON.stringify({event,data}));
               }
         })
     }

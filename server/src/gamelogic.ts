@@ -43,8 +43,8 @@ export class GameManager{
                 role.player = null
             }
 
-            
-            for(let player of this.gamedb.playerStore.list()){
+            var players = this.gamedb.playerStore.list()
+            for(let player of players){
                 player.money += 2
                 player.hand.push(...this.gamedb.game.deck.splice(0,2))
             }

@@ -32,10 +32,10 @@ export function genDB(){
     roleStore.set(roles)
 
     let players:Player[] = [
-        createPlayer('paul'),
-        createPlayer('wietse'),
-        createPlayer('marijn'),
-        createPlayer('geke'),
+        // createPlayer('paul'),
+        // createPlayer('wietse'),
+        // createPlayer('marijn'),
+        // createPlayer('geke'),
     ]
     playerStore.set(players)
 
@@ -103,7 +103,7 @@ function createCard(role,cost,name,image:string):Card{
     }
 }
 
-function createPlayer(name):Player{
+export function createPlayer(name):Player{
     return {
         id:null,
         money:0,

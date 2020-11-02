@@ -8,17 +8,17 @@ class Client{
     constructor(){
         this.socket = new WebSocket('ws://localhost:8080');
         this.socket.addEventListener('message',(e) => {
-            this.onReceived.trigger(e.data)
+            this.onReceived.trigger(JSON.parse(e.data))
         })
 
         // var db = this.getDataBase()
         
         this.onReceived.listen((e) => {
-            if(e.val.type == 'mulligan'){
+            if(e.val.event == 'mulligan'){
                 this.gameview.mulliganview.display(e.val.data)
             }
         
-            if(e.val.type == 'dataupdate'){
+            if(e.val.event == 'dataupdate'){
                 var db = this.convertDB(e.val.data)
                 this.gameview = new GameView()
                 this.gameview.board.loadDashboard(db.players[0])
@@ -29,6 +29,10 @@ class Client{
         // this.gameview.outputEvents.listen(e => {
         //     this.send(e.val.type,e.val.data)
         // })
+    }
+
+    start(){
+        this.send('gamestart',{})
     }
 
 
