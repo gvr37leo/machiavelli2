@@ -23,7 +23,7 @@ export class Server{
     onReceived = new EventSystem<any>()
     wss: any
     gamemanager: GameManager
-    clientStore:Store<ClientRegistration>
+    clientStore = new Store<ClientRegistration>()
 
     constructor(){
         this.wss = new ws.Server({port:8080})

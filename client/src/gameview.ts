@@ -1,3 +1,8 @@
+class GameEvent{
+    type:string
+    data:any
+}
+
 class GameView{
     root: HTMLElement
     board: BoardView
@@ -7,9 +12,9 @@ class GameView{
     modal: Modal
     mulliganview: MulliganView
     outputEvents = new EventSystem<GameEvent>()
+    gamedb:GameDB
 
-
-    constructor(public gamedb:GameDB){
+    constructor(){
         this.mulliganview = new MulliganView()
 
         
@@ -46,30 +51,31 @@ class GameView{
             this.outputGameEvent('pass',{})
         })
 
-        for(let player of this.gamedb.playerStore.list()){
-            let playerview = new PlayerView()
-            this.playerviews.push(playerview)
-            playerview.set(player)
-            this.board.playerlist.appendChild(playerview.root)
-            playerview.root.addEventListener('click',() => {
-                this.board.loadDashboard(player)
-            })
-        }
+        // for(let player of this.gamedb.playerStore.list()){
+        //     let playerview = new PlayerView()
+        //     this.playerviews.push(playerview)
+        //     playerview.set(player)
+        //     this.board.playerlist.appendChild(playerview.root)
+        //     playerview.root.addEventListener('click',() => {
+        //         this.board.loadDashboard(player)
+        //     })
+        // }
 
-        for(let role of this.gamedb.roleStore.list()){
-            let roleview = new RoleView()
-            this.roleviews.push(roleview)
-            roleview.set(role)
-            this.board.rolelist.appendChild(roleview.root)
-        }
+        // for(let role of this.gamedb.roleStore.list()){
+        //     let roleview = new RoleView()
+        //     this.roleviews.push(roleview)
+        //     roleview.set(role)
+        //     this.board.rolelist.appendChild(roleview.root)
+        // }
     }
 
-    updateView(){
+    loadDB(gamedb:GameDB){
+        this.gamedb = gamedb
         this.board.loadDashboard(determineActivePlayer(this.gamedb))
 
-        for(var player of this.playerviews){
-            player.setCrownWearer(player.player.id == this.gamedb.game.crownwearer)
-            player.setHighlight(player.player.id == determineActivePlayer(this.gamedb).id)
+        for(var playerview of this.playerviews){
+            playerview.setCrownWearer(playerview.player.id == this.gamedb.game.crownwearer)
+            playerview.setHighlight(playerview.player.id == determineActivePlayer(this.gamedb).id)
         }
 
         for(var role of this.roleviews){

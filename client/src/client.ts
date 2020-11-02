@@ -6,42 +6,37 @@ class Client{
     clientid:number
 
     constructor(){
-        this.socket = new WebSocket('ws://localhost:8000');
+        this.socket = new WebSocket('ws://localhost:8080');
         this.socket.addEventListener('message',(e) => {
             this.onReceived.trigger(e.data)
         })
 
-        var db = this.getDataBase()
-        this.gameview = new GameView(db)
-        this.gameview.board.loadDashboard(db.players[0])
+        // var db = this.getDataBase()
+        
         this.onReceived.listen((e) => {
             if(e.val.type == 'mulligan'){
                 this.gameview.mulliganview.display(e.val.data)
             }
         
             if(e.val.type == 'dataupdate'){
-                this.gameview.updateView()
+                var db = this.convertDB(e.val.data)
+                this.gameview = new GameView()
+                this.gameview.board.loadDashboard(db.players[0])
+                
             }
         })
 
-        this.gameview.outputEvents.listen(e => {
-            this.send(e.val.type,e.val.data)
-        })
+        // this.gameview.outputEvents.listen(e => {
+        //     this.send(e.val.type,e.val.data)
+        // })
     }
 
-    join(){
-
-    }
 
     send(event,data){
         this.socket.send(JSON.stringify({type:event,data:data}))
     }
 
-    getDataBase():GameDB{
-        var db = this.convertDB(null)
-        return db
-    }
-
+    
     
     convertDB(gamedb:GameDB){
         gamedb.cardStore = new Store()
