@@ -17,10 +17,15 @@
 /// <reference path="./src/gamedb.ts" />
 /// <reference path="../node_modules/eventsystemx/EventSystem.ts" />
 
-
+var cardStore:Store<Card>
+var playerStore:Store<Player>
+var roleStore:Store<Role>
 
 var client = new Client()
 
+document.querySelector('#startbutton').addEventListener('click',() => {
+    client.start()
+})
 
 // document.body.appendChild(client.gameview.root)
 

@@ -9,7 +9,6 @@ class MulliganData{
 class MulliganView{
     rendermap = new Map<string,(val:any) => HTMLElement>()
     onMulliganConfirmed = new EventSystem<{mulliganid:number,chosenoptions:boolean[]}>()
-    root:HTMLElement
     itemscontainer: HTMLElement
     confirmbutton: HTMLElement
 
@@ -21,8 +20,7 @@ class MulliganView{
     constructor(){
         this.modal = new Modal()
         this.modal.attachtodocument()
-        
-        this.root = string2html(`
+        this.modal.set(string2html(`
             <div style="    display: flex;
             flex-direction: column;
             justify-content: center;
@@ -39,9 +37,10 @@ class MulliganView{
                 </div>
 
             </div>
-        `)
-        this.itemscontainer = this.root.querySelector('#items')
-        this.confirmbutton = this.root.querySelector('#confirmbutton')
+        `))
+        
+        this.itemscontainer = this.modal.rootelement.querySelector('#items')
+        this.confirmbutton = this.modal.rootelement.querySelector('#confirmbutton')
 
         document.addEventListener('keydown', e => {
             if(e.key == 'Enter' && this.modal.isHidden == false){
@@ -112,7 +111,7 @@ class MulliganView{
 
             this.itemscontainer.appendChild(wrapper.root)
         }
-        this.modal.setAndShow(this.root)
+        this.modal.show()
     }
 
     // setChoice(index,val){
@@ -124,6 +123,16 @@ class MulliganView{
     //     }
         
     // }
+}
+
+function count(arr,cb){
+    var count = 0
+    for(var item of arr){
+        if(cb(item)){
+            count++
+        }
+    }
+    return count
 }
 
 

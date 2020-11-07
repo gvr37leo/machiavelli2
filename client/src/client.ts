@@ -6,6 +6,12 @@ class Client{
     clientid:number
 
     constructor(){
+        var mulliganview = new MulliganView()
+        document.body.appendChild(mulliganview.modal.rootelement)
+        mulliganview.modal.hide()
+        mulliganview.onMulliganConfirmed.listen(e => {
+            this.send('mulliganconfirmed',e.val)
+        })
         this.socket = new WebSocket('ws://localhost:8080');
         this.socket.addEventListener('message',(e) => {
             this.onReceived.trigger(JSON.parse(e.data))
@@ -15,11 +21,14 @@ class Client{
         
         this.onReceived.listen((e) => {
             if(e.val.event == 'mulligan'){
-                this.gameview.mulliganview.display(e.val.data)
+                mulliganview.display(e.val.data)
             }
         
             if(e.val.event == 'dataupdate'){
                 var db = this.convertDB(e.val.data)
+                playerStore = db.playerStore
+                roleStore = db.roleStore
+                cardStore = db.cardStore
                 this.gameview = new GameView()
                 this.gameview.board.loadDashboard(db.players[0])
                 

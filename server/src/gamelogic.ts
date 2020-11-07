@@ -113,7 +113,7 @@ export class GameManager{
             }else{
                 
 
-                let playerOfCurrentRole = this.gamedb.playerStore.get(role.player)
+                let playerOfCurrentRole = this.gamedb.playerStore.list()[role.player]
                 playerOfCurrentRole.buildactions = 1
                 if(this.gamedb.game.burgledRole != null && this.gamedb.game.burgledRole == data.role){
                     let thiefrole = this.gamedb.roleStore.list().find(r => r.name == 'dief')

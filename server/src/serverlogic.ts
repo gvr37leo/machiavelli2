@@ -33,6 +33,7 @@ export class Server{
             var player = createPlayer('random name')
             this.gamemanager.gamedb.playerStore.add(player)
             client.playerid = player.id
+            this.gamemanager.updateClients()
             //add player to game
 
             ws.on('message',(message) => {
