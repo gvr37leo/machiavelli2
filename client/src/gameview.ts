@@ -15,11 +15,16 @@ class GameView{
     gamedb:GameDB
 
     constructor(){
+
+
+
+
+
+    }
+
+    renderDatabase(gamedb:GameDB){
+        this.gamedb = gamedb
         this.mulliganview = new MulliganView()
-
-        
-
-
         this.modal = new Modal()
         document.body.appendChild(this.modal.rootelement)
 
@@ -28,6 +33,23 @@ class GameView{
 
         this.board = new BoardView()
         this.root = this.board.root
+
+        for(let player of this.gamedb.playerStore.list()){
+            let playerview = new PlayerView()
+            this.playerviews.push(playerview)
+            playerview.set(player)
+            this.board.playerlist.appendChild(playerview.root)
+            playerview.root.addEventListener('click',() => {
+                this.board.loadDashboard(player)
+            })
+        }
+
+        for(let role of this.gamedb.roleStore.list()){
+            let roleview = new RoleView()
+            this.roleviews.push(roleview)
+            roleview.set(role)
+            this.board.rolelist.appendChild(roleview.root)
+        }
 
         this.carddisplay.onCardPlayed.listen((e) => {
             this.outputGameEvent('build',{
@@ -50,28 +72,13 @@ class GameView{
         this.board.passbutton.addEventListener('click',() => {
             this.outputGameEvent('pass',{})
         })
-
-        // for(let player of this.gamedb.playerStore.list()){
-        //     let playerview = new PlayerView()
-        //     this.playerviews.push(playerview)
-        //     playerview.set(player)
-        //     this.board.playerlist.appendChild(playerview.root)
-        //     playerview.root.addEventListener('click',() => {
-        //         this.board.loadDashboard(player)
-        //     })
-        // }
-
-        // for(let role of this.gamedb.roleStore.list()){
-        //     let roleview = new RoleView()
-        //     this.roleviews.push(roleview)
-        //     roleview.set(role)
-        //     this.board.rolelist.appendChild(roleview.root)
-        // }
     }
 
     loadDB(gamedb:GameDB){
         this.gamedb = gamedb
-        this.board.loadDashboard(determineActivePlayer(this.gamedb))
+        if(determineActivePlayer(this.gamedb) != null){
+            this.board.loadDashboard(determineActivePlayer(this.gamedb))
+        }
 
         for(var playerview of this.playerviews){
             playerview.setCrownWearer(playerview.player.id == this.gamedb.game.crownwearer)

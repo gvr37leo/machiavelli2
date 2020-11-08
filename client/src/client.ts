@@ -6,6 +6,7 @@ class Client{
     clientid:number
 
     constructor(){
+        this.gameview = new GameView()
         var mulliganview = new MulliganView()
         document.body.appendChild(mulliganview.modal.rootelement)
         mulliganview.modal.hide()
@@ -29,15 +30,19 @@ class Client{
                 playerStore = db.playerStore
                 roleStore = db.roleStore
                 cardStore = db.cardStore
-                this.gameview = new GameView()
-                this.gameview.board.loadDashboard(db.players[0])
+                this.gameview.renderDatabase(db)
+                this.gameview.loadDB(db)
+
+                var gamecontainer = document.querySelector('#gamecontainer')
+                gamecontainer.innerHTML = ''
+                gamecontainer.appendChild(this.gameview.root)
                 
             }
         })
 
-        // this.gameview.outputEvents.listen(e => {
-        //     this.send(e.val.type,e.val.data)
-        // })
+        this.gameview.outputEvents.listen(e => {
+            this.send(e.val.type,e.val.data)
+        })
     }
 
     start(){
@@ -53,11 +58,11 @@ class Client{
     
     convertDB(gamedb:GameDB){
         gamedb.cardStore = new Store()
-        gamedb.cardStore.set(gamedb.cards)
+        gamedb.cardStore.hardset(gamedb.cards)
         gamedb.playerStore = new Store()
-        gamedb.playerStore.set(gamedb.players)
+        gamedb.playerStore.hardset(gamedb.players)
         gamedb.roleStore = new Store()
-        gamedb.roleStore.set(gamedb.roles)
+        gamedb.roleStore.hardset(gamedb.roles)
         return gamedb
     }
 }

@@ -12,6 +12,12 @@ class Store<T>{
         }
     }
 
+    hardset(list:T[]){
+        for(let item of list){
+            this.map.set(item['id'],item)
+        }
+    }   
+
     add(item:T){
         item['id'] = this.idcounter++
         this.map.set(item['id'],item)
